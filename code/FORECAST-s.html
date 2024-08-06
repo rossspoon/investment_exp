@@ -6,11 +6,12 @@
 		<link href="jspsych-5.0.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
 		<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
 		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css"></link>
+                <link rel="stylesheet" href="css/main.css"/>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<script src="jspsych-5.0.3/jspsych.js"></script>
 		<script src="jspsych-5.0.3/plugins/jspsych-payment.js"></script>
 		<script src="jspsych-5.0.3/plugins/jspsych-view.js"></script>
-		<script src="jspsych-5.0.3/plugins/jspsych-forecast.js"></script>
+		<script src="jspsych-5.0.3/plugins/jspsych-invest.js"></script>
 		<script src="jspsych-5.0.3/plugins/jspsych-html.js"></script>
 		<script src="jspsych-5.0.3/plugins/jspsych-instructions.js"></script>
 		<script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
@@ -29,8 +30,8 @@
 	</body>
 	<script>
 
-		var test_mode = false;
-		var quick_mode = false;
+		var test_mode = true;
+		var quick_mode = true;
 		var exp_type = 1; // see treatments
 		var treatments = ["variance", "size", "time"];
 		var blocks = jsPsych.randomization.shuffle([0,1]); // block order
@@ -44,21 +45,21 @@
 		if (exp_type == 0) {
 			var prior_std_I = [5, 30]; // standard deviation of industry factor prior
 			var prior_std_S = [30, 5]; // standard deviation of stock-specific factor priors
-			var n_firms = [5, 5]; // number of firms
-			var names = [["INDUSTRY", "Stock A", "Stock B", "Stock C", "Stock D", "Stock E"], ["INDUSTRY", "Stock A", "Stock B", "Stock C", "Stock D", "Stock E"]]; // factor names
+			var n_firms = [4, 4]; // number of firms
+			var names = [["Stock A", "Stock B", "Stock C", "Stock D", "Stock E"], [, "Stock A", "Stock B", "Stock C", "Stock D", "Stock E"]]; // factor names
 			var time_limit = [12*1000, 12*1000]; //number of (milli)seconds allowed
 		} else if (exp_type == 1) {
 			var prior_std_I = [30, 30]; // standard deviation of industry factor prior
 			var prior_std_S = [5, 5]; // standard deviation of stock-specific factor priors
-			var n_firms = [2, 8]; // number of firms
+			var n_firms = [1, 7]; // number of firms
 			if (n_firms[0] > n_firms[1]) { var n_firms = n_firms.reverse() }
-			var names = [["INDUSTRY", "Stock A", "Stock B"], ["INDUSTRY", "Stock A", "Stock B", "Stock C", "Stock D", "Stock E", "Stock F", "Stock G", "Stock H"]]; // factor names
-			var time_limit = [12*1000, 12*1000]; //number of (milli)seconds allowed
+			var names = [["Stock A", "Stock B"], ["Stock A", "Stock B", "Stock C", "Stock D", "Stock E", "Stock F", "Stock G", "Stock H"]]; // factor names
+			var time_limit = [1*1000, 1*1000]; //number of (milli)seconds allowed
 		} else if (exp_type == 2) {
 			var prior_std_I = [30, 30]; // standard deviation of industry factor prior
 			var prior_std_S = [5, 5]; // standard deviation of stock-specific factor priors
-			var n_firms = [5, 5]; // number of firms
-			var names = [["INDUSTRY", "Stock A", "Stock B", "Stock C", "Stock D", "Stock E"], ["INDUSTRY", "Stock A", "Stock B", "Stock C", "Stock D", "Stock E"]]; // factor names
+			var n_firms = [4, 4]; // number of firms
+			var names = [[ "Stock A", "Stock B", "Stock C", "Stock D", "Stock E"], [ "Stock A", "Stock B", "Stock C", "Stock D", "Stock E"]]; // factor names
 			var time_limit = [20*1000, 8*1000]; //number of (milli)seconds allowed
 		}
 
@@ -363,11 +364,12 @@
 				};
 
 				var practice_forecast_trial = {
-					type: "forecast",
+					type: "invest",
 					period: t,
 					n_periods: practice_n_periods,
 					n_firms: practice_n_firms,
 					names: practice_names,
+                                        endowment: 100,
 					// total_time: 60*1000,
 					prior_mean: practice_prior_mean,
 					prior_std: practice_prior_std[t],
@@ -426,11 +428,12 @@
 				};
 
 				var forecast_trial = {
-					type: "forecast",
+					type: "invest",
 					period: t,
 					n_periods: n_periods,
 					n_firms: n_firms[bl],
 					names: names[bl],
+                                        endowment: 100,
 					// total_time: 60*1000,
 					prior_mean: prior_mean[bl],
 					prior_std: prior_std[bl],

@@ -1,0 +1,163 @@
+:root {
+
+--colBody: rgb(200,200,205);
+--colHeader: rgba(80,80,100,1);
+--colHeader2: #241846;
+--colFooter: rgba(140,140,170,1);
+--btnColor: #64289b;
+
+--colTable_Out: white;
+--colTable_In: hsl(225, 40%, 96%);
+--colTable_In4: rgb(22,22,35);
+
+--x1: rgb(40,40,80);
+--x3: hsl(225, 30%, 20%);
+--x4: hsl(225, 30%, 30%);
+--x6: hsl(225, 30%, 90%);
+--x7: hsl(225, 40%, 96%);
+--x9: hsl(225, 40%, 94%);
+--x8: hsl(225, 30%, 99%);
+
+--err-bkgrnd: #fcaea6;
+
+--table-marg-top: 30px;
+--headerHeight: 60px;
+--instrHeight: 60px;
+--footerHeight: 60px;
+}
+
+.investment-cell {
+    min-width: 350px;
+    background-color: var(--colTable_In);
+    padding: 0px;
+    margin: 0px;
+    border-bottom: solid 1px rgba(0,;0,0,0.1);
+    position: relative;
+    text-align: center;
+}
+
+.inv-input-container {
+    width: 50px;
+    margin: auto;
+    position: relative;
+}
+.inv-input {
+    outline: none;
+    width: 4ch;
+}
+.inv-err {
+    border: solid 3px tomato;
+    background-color: var(--err-bkgrnd);
+}
+.inv-err::after {
+    content: attr(err_msg);
+
+    border: solid 2px tomato;
+    border-radius: 5px;
+    background-color: var(--err-bkgrnd);
+    width:230px;
+
+    position: absolute;
+    z-index: 2;
+    left: -70px;
+    top: -45px;
+}
+.inv-err::before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: -50%;
+    left: 30%;
+    border-width: 10px;
+    border-style: solid;
+    border-color: tomato transparent transparent transparent;
+}
+
+table {
+    position: relative;
+    width: 80%;
+    min-width: 500px;
+    max-width: 700px;
+
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: var(--table-marg-top);
+
+    margin-bottom: 30px;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+.info-table{
+}
+
+.info-table td{
+    width: 33%;
+    text-align: center;
+}
+
+.table-head {
+    vertical-align: middle;
+    text-align: center;
+    font-size: 16px;
+    font-family: Roboto, sans-serif;
+    font-weight: 400;
+    color: rgba(255, 255, 255, .85);
+    background-color: var(--colHeader2);
+    padding-right: 25px;
+    padding-left: 25px;
+    text-transform: uppercase;
+    border-bottom: solid 1px rgba(1,1,1,.1);
+    height: 40px;
+    border-right: solid 1px rgba(0,0,0,0.1);
+}
+
+.head-cell {
+    padding-right: 25px;
+    padding-left: 25px;
+    border-bottom: solid 1px rgba(0,0,0,0.1);
+    border-right: solid 1px rgba(0,0,0,0.1);
+}
+
+.top-spacer {
+    height: var(--headerHeight);
+}
+.top-spacer-instr {
+    height: calc(var(--headerHeight) + var(--instrHeight));
+}
+
+.btn {
+    position: fixed;
+    background-color: var(--btnColor);
+    width: 90px;
+    height: var(--footerHeight);
+    margin-left: calc(100% - 90px);
+    z-index: 50;
+    display: table;
+    opacity: .8;
+    cursor: not-allowed;
+}
+.btn p {
+    color: rgba(255,255,255,.9);
+    font-size: 18px;
+    font-weight: 300;
+    width: 100%;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+    text-transform: uppercase;
+    opacity: .2;
+}
+
+.btn-off {
+}
+.btn-off p {
+}
+
+.btn-on {
+    opacity: 1;
+    cursor: pointer;
+}
+.btn-on p {
+    opacity: 1;
+}
