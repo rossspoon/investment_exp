@@ -1,0 +1,9 @@
+07/08/2024
+-numerical text box input for investment (% of endowment)
+-add up to 100%, gray out submit button if not
+-show residual as cash balance
+-remove industry row
+
+next
+-payment structure
+-instructions
