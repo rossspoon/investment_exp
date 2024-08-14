@@ -56,10 +56,11 @@
     border-radius: 5px;
     background-color: var(--err-bkgrnd);
     width:230px;
+    padding: 0px 15px;
 
     position: absolute;
     z-index: 2;
-    left: -70px;
+    left: -80px;
     top: -45px;
 }
 .inv-err::before {

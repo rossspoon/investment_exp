@@ -1276,6 +1276,7 @@ jsPsych.plugins["invest"] = (function() {
     //  Calling this function is the last thing the that play() function does
     //  This is going to add event listeners to the DOM elements created by the
     //  play() function.
+    var time_out_identifier = null;
     function add_event_listeners(){
         $('.inv-input').on('focus', function(){
             current_balance = trial_data.balance;
@@ -1283,11 +1284,18 @@ jsPsych.plugins["invest"] = (function() {
         });
 
         $('.inv-input').on('keyup', function(){
+            //There might be a time out in place that will update the
+            // balance.  This keyup event should preempt that timer
+            if (time_out_identifier != null){
+                clearTimeout(time_out_identifier);
+            }
+            $('.inv-input-container').removeClass('inv-err');
+            $('#proceed').removeClass('btn-on');
+
             this.value = this.value.replace(/[^0-9]/g, '');
 
-            container_div = $(this).parent('.inv-input-container');
 
-            current_balance = $(this).attr('balance');
+            //current_balance = $(this).attr('balance');
             // Add up all investment choices
             var sum = 0
             $('.inv-input').each(function(){
@@ -1299,26 +1307,34 @@ jsPsych.plugins["invest"] = (function() {
             
             
             //Test if the value is less than the available balance
+            container_div = $(this).parent('.inv-input-container');
             if (sum > trial_data.endowment) {
                 container_div.addClass('inv-err');
-                container_div.attr('err_msg', "Must be " + current_balance + " or less.");
-                return;
+                if (current_balance > 0){
+                    container_div.attr('err_msg', "Must be " + current_balance + " or less");
+                } else {
+                    container_div.attr('err_msg', "Reduce investment amounts");
+                }
             } else {
                 container_div.removeClass('inv-err');
             }
 
             //all is well
             // update the balance row
-            trial_data.balance = trial_data.endowment - sum
-            $('#balance_amount').html("" + trial_data.balance);
+            // Give a pause before updating the balance information
+            // This gives time for typing multi-digit inputs
+            time_out_identifier = setTimeout( function(){
+                trial_data.balance = trial_data.endowment - sum
+                $('#balance_amount').html("" + trial_data.balance);
+                current_balance = trial_data.balance;
 
 
-            if (sum == trial_data.endowment){
-                $('.inv-input').removeClass('inv-err');
-                $('#proceed').addClass('btn-on');
-            } else {
-                $('#proceed').removeClass('btn-on');
-            }
+                if (sum == trial_data.endowment){
+                    $('#proceed').addClass('btn-on');
+                } else {
+                    $('#proceed').removeClass('btn-on');
+                }
+            }, 500);
         });
 
         $("#proceed").on("click", function () {if (trial.feedback == true) feedback(); else done();});
