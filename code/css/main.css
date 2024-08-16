@@ -26,8 +26,10 @@
 --footerHeight: 60px;
 }
 
+
+/* INVESTMENT CELL - start */
 .investment-cell {
-    min-width: 350px;
+    min-width: 200px;
     background-color: var(--colTable_In);
     padding: 0px;
     margin: 0px;
@@ -73,6 +75,19 @@
     border-style: solid;
     border-color: tomato transparent transparent transparent;
 }
+/* INVESTMENT CELL - end */
+
+/* RESULT CELL - start */
+.result-cell {
+    background-color: var(--colTable_In);
+    padding: 0px;
+    margin: 0px;
+    border-bottom: solid 1px rgba(0,;0,0,0.1);
+    position: relative;
+    text-align: center;
+    min-width: 150px;
+}
+/* RESULT CELL - end */
 
 table {
     position: relative;
@@ -120,13 +135,16 @@ table {
     border-right: solid 1px rgba(0,0,0,0.1);
 }
 
+/* TOP SPACER - start */
 .top-spacer {
     height: var(--headerHeight);
 }
 .top-spacer-instr {
     height: calc(var(--headerHeight) + var(--instrHeight));
 }
+/* TOP SPACER - end  */
 
+/* SUBMIT BUTTON - start */
 .btn {
     position: fixed;
     background-color: var(--btnColor);
@@ -162,3 +180,18 @@ table {
 .btn-on p {
     opacity: 1;
 }
+/* SUBMIT BUTTON - end */
+
+/* MAIN TABLE HEADER - start */
+.header-cell {
+    background-color: var(--colHeader2);
+    border-bottom: solid 1px rgba(0,0,0,0.1);
+    border-right: solid 1px rgba(0,0,0,0.1);
+    border-left: solid 1px rgba(0,0,0,0.1);
+    padding: 5px 10px;
+}
+
+.header-cell:first-child {
+    padding-left: 25px;
+}
+/* MAIN TABLE HEADER - end */

@@ -72,21 +72,24 @@ function make_investment_td(idx) {
     return td;
 }
 
-function make_endowment_td(endowment){
+
+//-----------   Create a table cell for the result column
+function make_result_td(idx){
     var td = $("<td>", {
-        id: "endowment_td",
-        class: 'investment-cell',
+        id: "table_" + idx + "_5",
+        class: "result-cell",
     });
 
-    var endow_div = $("<div>", {
-        id: "endow_amt",
-        class: "endow-amt",
-        html: endowment
+    var result_div= $("<div>", {
+        id: "result_amt_" + idx,
+        class: "result-amt",
+        html: "&nbsp;",
     });
+    td.append(result_div);
 
-    td.append(endow_div);
     return td;
 }
+
 
 function get_info_table(endowment) {
     var table = $("<table>", {
@@ -136,6 +139,7 @@ function get_info_table(endowment) {
     info_row.append(bal_td);
 
     var result_td = $("<td>", {
+        id: "result_amount",
         html: "&nbsp;",
     });
     info_row.append(result_td);
@@ -150,6 +154,23 @@ function get_spacer_div(instr){
     });
 
     return div;
+}
+
+function get_header_cell(content, elem_id, text_align){
+    var colspan = 1;
+    if (content == "factor"){
+        colspan = 2;
+    }
+
+    td = $("<td>", {
+        id: "table_header_" + elem_id,
+        html: content,
+        colspan: colspan,
+        css: {"text-align": text_align},
+        class: "header-cell",
+    });
+
+    return td
 }
 
 
@@ -285,146 +306,29 @@ jsPsych.plugins["invest"] = (function() {
                 var feedbackDone = false;
 
                 function feedback () {
+                    total_reward = 0;
 
-                        if (feedbackDone) return;
-                        feedbackDone = true;
+                    for (var i = 0; i < nFirms; i++) {
+                            k = random_order_stocks[i];
 
-                        var i, j, k, ii, leftOff, click, newPos, slider, thumb, npr, error, errorPos, labelPos, litError;
+                            mean = prior_mean[k];
+                            std = prior_std[k];
 
-                        ii = 0;
+                            draw = normal(mean, std);
+                            inv = Number($("#input_"+i).val());
+                            result = (inv + (draw * inv)/100);
 
-                        for (i = 0; i < nFirms; i++) {
+                            $("#result_amt_"+i).html(result.toFixed(2));
+                            total_reward += result;
+                    }
 
-                                k = random_order_stocks[i];
+                    $("#result_amount").html(total_reward.toFixed(2));
 
-                                if (trial.forecast_industry || (k != 0)) {
-
-                                        slider = $($('.slider')[ii]);
-                                        sliderwrapper = $($('.sliderwrapper')[ii]);
-                                        thumb = $(slider.children()[0]);
-
-                                        slider.off()
-                                        sliderwrapper.off()
-                                        slider.css('cursor', 'auto')
-                                        sliderwrapper.css('cursor', 'auto')
-                                        thumb.draggable('disable')
-
-                                        leftOff = slider.offset().left;
-
-                                        // npr is industry + firm or just industry for industry
-                                        npr = k == 0 ? trial.next_period_realizations[k] : trial.next_period_realizations[k] + trial.next_period_realizations[0];
-
-                                        // marks true npr on slider
-                                        newPos = ((npr - slider_min) / slider_max) * slider.width() - thumbWidth;
-                                        newPos = Math.round(newPos);
-
-                                        // discrepancy: true npr, current slider position
-                                        sliderPos = (thumb.offset().left - leftOff);
-                                        error = newPos - sliderPos;
-                                        
-                                        // starting point for red error bar
-                                        errorPos = error < 0 ? newPos : newPos - error;
-
-                                        // position of error label above bar
-                                        //labelPos = (thumb.offset().left - leftOff + newPos) / 2;
-
-                                        // number to go into the label
-                                        sliderVal = Math.round(slider_min + slider_max * (thumb.offset().left - leftOff + thumbWidth/2) / slider.width())
-                                        litError = npr - sliderVal;
-
-                                        
-                                        trial_data.errorSum += (Math.abs(litError)**2)/(nFirms - 1); //changed to fix errorSum calc issue
-
-
-                                        // !
-                                        trial_data.true_total_val[k] = npr;
-                                        trial_data.prediction[k] = sliderVal;
-                                        trial_data.errors[k] = litError;
-
-                                        thumb.css("backgroundColor", "red")
-                                        slider.append($("<div>", {
-                                                html: npr,
-                                                id: ii,
-                                                class: "slider-thumb",
-                                                css: {
-                                                        position: "absolute",
-                                                        top: "50%",
-                                                        marginTop: -32/2,
-                                                        backgroundColor: "red",
-                                                        width: 32,
-                                                        height: 32,
-                                                        borderRadius: "100%",
-                                                        //opacity: 1,
-                                                        zIndex: 20,
-                                                        fontSize: 16,
-                                                        color: "white",
-                                                        textAlign: "center",
-                                                        lineHeight: 2,
-                                                },
-                                                offset: {
-                                                        left: newPos,
-                                                }
-                                        }))
-                                        slider.append($("<div>", {
-                                                id: ii,
-                                                class: "error",
-                                                css: {
-                                                        position: "absolute",
-                                                        top: "50%",
-                                                        marginTop: -sliderHeight/2,
-                                                        backgroundColor: "red",
-                                                        width: Math.abs(error),
-                                                        height: sliderHeight,
-                                                        zIndex: 0,
-                                                },
-                                                offset: {
-                                                        left: errorPos,
-                                                }
-                                        }))
-
-                                        const truval = $("<div>", {
-                                                id: "truval_" + ii,
-                                                html: litError < 0 ? "&#8722;" + Math.abs(litError) : "+" + Math.abs(litError),
-                                                css: {
-                                                        color: "red",
-                                                        fontSize: 12,
-                                                        textAlign: "center",
-                                                        fontWeight: "light",
-                                                        position: "absolute",
-                                                        top: Math.abs(error) > 40 ? -25 : -32,
-                                                        marginTop: -sliderHeight/2,
-                                                        backgroundColor: "none",
-                                                        width: Math.abs(error) + 20,
-                                                        height: 20,
-                                                        zIndex: 2,
-                                                        marginLeft: 0,
-                                                        visibility: "hidden",
-                                                },
-                                                offset: {
-                                                        left: error < 0 ? errorPos + thumbWidth - 10 : errorPos + thumbWidth - 10,
-                                                }
-                                        });
-
-                                        slider.append(truval)
-
-                                        $(document.getElementById("table_" + i)).on("mouseover", function (event) {
-                                                $(truval).css("visibility", "visible");
-                                        })
-                                        $(document.getElementById("table_" + i)).on("mouseout", function (event) {
-                                                $(truval).css("visibility", "hidden");
-                                        })
-
-                                        ii++;
-
-                                }
-
-                        }
-
-                        clearInterval(countDown)
-                        $(document.getElementById("timer")).css("opacity", .5)
-                        $(document.getElementById("proceed")).off()
-                        $(document.getElementById("proceed-text")).html("next")
-                        $(document.getElementById("proceed")).on("click", done)
+                    clearInterval(countDown)
+                    $(document.getElementById("timer")).css("opacity", .5)
+                    $(document.getElementById("proceed")).off()
+                    $(document.getElementById("proceed-text")).html("next")
+                    $(document.getElementById("proceed")).on("click", done)
 
                 }
 
@@ -682,7 +586,7 @@ jsPsych.plugins["invest"] = (function() {
 
                                 $(document.getElementById("table")).append($("<tr>", {
                                         "id": "table_header",
-                                        class: "table-row",
+                                        class: "main-table-row",
                                         "css": {
                                                 "vertical-align": "middle",
                                                 "text-align": "center",
@@ -700,61 +604,20 @@ jsPsych.plugins["invest"] = (function() {
                                         }
                                 })
 
-                                // names
-                                .append($("<td>", {
-                                        "id": "table_header_" + 0,
-                                        "html": "names",
-                                        "css": {
-                                                "text-align": "left",
-                                                "color": "rgba(255, 255, 255, .85)",
-                                                "background-color": colHeader2,
-                                                "padding-right": 25,
-                                                "padding-left": 25,
-                                                "border-bottom": "solid 1px rgba(0,0,0,0.1)",
-                                                "border-right": "solid 1px rgba(0,0,0,0.1)",
-                                        }
-                                }))
+                                .append(get_header_cell("names", 0, "left"))
 
                                 // y-axis
-                                .append($("<td>", {
-                                        id: "table_header_" + 1,
-                                        html: "factor",
-                                        colspan: 2,
-                                        css: {
-                                                "text-align": "right",
-                                                "background-color": colHeader2,
-                                                "border-bottom": "solid 1px rgba(0,0,0,0.1)",
-                                                "border-right": "solid 1px rgba(0,0,0,0.1)",
-                                                "border-left": "solid 1px rgba(0,0,0,0.1)",
-                                        },
-                                }))
+                                .append(get_header_cell("factor", 1, "center"))
 
                                 // npr
-                                .append($("<td>", {
-                                        id: "table_header_" + 3,
-                                        html: "values",
-                                        css: {
-                                                "background-color": colHeader2,
-                                                "border-bottom": "solid 1px rgba(0,0,0,0.1)",
-                                                "border-right": "solid 1px rgba(0,0,0,0.1)",
-                                                "border-left": "solid 1px rgba(0,0,0,0.1)",
-                                        },
-                                }))
+                                .append(get_header_cell("values", 2, "center"))
 
-                                // slider
-                                .append($("<td>", {
-                                        id: "table_header_" + 4,
-                                        html: "Investment Amount",
-                                        css: {
-                                                "background-color": colHeader2,
-                                                "border-bottom": "solid 1px rgba(0,0,0,0.1)",
-                                                "border-right": "solid 1px rgba(0,0,0,0.1)",
-                                                "border-left": "solid 1px rgba(0,0,0,0.1)",
-                                        },
-                                }))
+                                // investment input
+                                .append(get_header_cell("Investment Amount", 3, "center"))
 
+                                // result column
+                                .append(get_header_cell("Result", 4, "center"))
                                 );
-
                         }
 
                         // Terrible, horrible, no good, very bad.
@@ -890,7 +753,7 @@ jsPsych.plugins["invest"] = (function() {
 
                                 // endowment or investment text box
                                 .append( make_investment_td(i) )
-
+                                .append( make_result_td(i) )
                                 )
                         };
 
