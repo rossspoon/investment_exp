@@ -529,14 +529,25 @@
 					// slider + sliderval
 					.append($("<td>", {
 						id: "table_header_" + 4,
-						html: "stock prediction",
+						html: "Investment Amount",
 						css: {
 							"background-color": colHeader2,
 							"border-bottom": "solid 1px rgba(0,0,0,0.1)",
 							"border-right": "solid 1px rgba(0,0,0,0.1)",
 							"border-left": "solid 1px rgba(0,0,0,0.1)",
 						},
-					})));
+					}))
+					.append($("<td>", {
+						id: "table_header_" + 5,
+						html: "Return",
+						css: {
+							"background-color": colHeader2,
+							"border-bottom": "solid 1px rgba(0,0,0,0.1)",
+							"border-right": "solid 1px rgba(0,0,0,0.1)",
+							"border-left": "solid 1px rgba(0,0,0,0.1)",
+						},
+					}))
+                                    );
 
 				}
 
@@ -675,7 +686,7 @@
 						html: "XXXXXXXXXXXX",
 						id: "table_" + i + "_" + 4,
 						css: {
-							"min-width": 350 + 50,
+							"min-width": "200px",
 							"background-color": colTable_In,
 							"padding": 0,
 							"margin": 0,
@@ -684,7 +695,22 @@
 							"text-align": "center",
 							"color": "rgba(0,0,0,.1)",
 						},
-					})))
+					}))
+					.append($("<td>", {
+						html: "XXXXXXX",
+						id: "table_" + i + "_" + 5,
+						css: {
+							"min-width": "150px",
+							"background-color": colTable_In,
+							"padding": 0,
+							"margin": 0,
+							"border-bottom": "solid 1px rgba(0,0,0,0.1)",
+							"position": "relative",
+							"text-align": "center",
+							"color": "rgba(0,0,0,.1)",
+						},
+					}))
+                                    )
 
 				}
 
