@@ -13,10 +13,10 @@ $ret = file_put_contents($filename, $data);
         <title>PHP Test</title>
     </head>
     <body>
-        <?php echo $filename; ?>
+        <?php echo $filename ?>
         <p>
-        <?php echo $data; ?>
+        <?php echo $data ?>
         <p>
-        <?php echo $ret; ?>
+        <?php echo $ret ?>
     </body>
 </html>
