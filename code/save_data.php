@@ -17,6 +17,6 @@ $ret = file_put_contents($filename, $data);
         <p>
         <?php echo $data ?>
         <p>
-        <?php echo $ret ?>
+        RETURN CODE: <?php echo $ret === true ?>
     </body>
 </html>
