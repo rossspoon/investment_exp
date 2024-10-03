@@ -4,7 +4,7 @@
 $filename = "data/".$_POST['filename'];
 $data = $_POST['filedata'];
 // write the file to disk
-file_put_contents($filename, $data);
+$ret = file_put_contents($filename, $data);
 ?>
 
 <!DOCTYPE html>
@@ -16,5 +16,7 @@ file_put_contents($filename, $data);
         <?php echo $filename; ?>
         <p>
         <?php echo $data; ?>
+        <p>
+        <?php echo $ret; ?>
     </body>
 </html>
