@@ -315,14 +315,18 @@ jsPsych.plugins["invest"] = (function() {
                             std = prior_std[k];
 
                             draw = normal(mean, std);
+                            trial_data.returns[i] = draw;
+
                             inv = Number($("#input_"+i).val());
                             result = (inv + (draw * inv)/100);
+                            trial_data.results[i] = result;
 
                             $("#result_amt_"+i).html(result.toFixed(2));
                             total_reward += result;
                     }
 
                     $("#result_amount").html(total_reward.toFixed(2));
+                    trial_data.total_result= total_reward;
 
                     clearInterval(countDown)
                     $(document.getElementById("timer")).css("opacity", .5)

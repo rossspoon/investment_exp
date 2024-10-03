@@ -289,14 +289,15 @@
 		//define function for calculating total bonus
 		function roundFloat(y,x) { return (Math.floor(y/x) * x).toFixed(2) };
  		function getSubjectData() {
- 			var test_outcomes = jsPsych.data.getTrialsOfType('forecast');
+ 			var test_outcomes = jsPsych.data.getTrialsOfType('invest');
  			// console.log(test_outcomes)
- 			var total_err = 0;
+ 			var total_reward= 0;
  			if (!quick_mode) { var start_pay = practice_n_periods; } else { var start_pay = 0; }
  			for (i = start_pay; i < start_pay + n_periods; i++) { 
- 				total_err += Math.min(test_outcomes[i].errorSum, a/b);
+ 				total_reward += test_outcomes[i].total_result;
  			}
- 			return roundFloat(a - b*total_err/n_periods, 0.0001)
+ 			//return roundFloat(a - b*total_err/n_periods, 0.0001)
+ 			return roundFloat(b*total_reward, 0.0001)
 		}
 		
 		var bonus_block = {
@@ -427,7 +428,7 @@
 					data: { stage: "view_real" },
 				};
 
-				var forecast_trial = {
+				var invest_trial = {
 					type: "invest",
 					period: t,
 					n_periods: n_periods,
@@ -451,16 +452,16 @@
 				};
 
 				timeline.push(view_trial);
-				timeline.push(forecast_trial);
+				timeline.push(invest_trial);
 
 		}
 
 	//if (!quick_mode) {
-		timeline.push(strategy_block);
-		timeline.push(comment_block);
-		timeline.push(age_block);
-		timeline.push(worker_id_input);
-	//	}
+                    timeline.push(strategy_block);
+                    timeline.push(comment_block);
+                    timeline.push(age_block);
+                    timeline.push(worker_id_input);
+	//}
 		timeline.push(bonus_block);
 		timeline.push(debrief_block);
 
