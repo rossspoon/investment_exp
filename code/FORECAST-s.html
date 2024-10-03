@@ -322,7 +322,7 @@
 			$.ajax({
 				type:'post',
 				cache: false,
-				url: 'save_data.php', // this is the path to the above PHP script
+				url: 'code/save_data.php', // this is the path to the above PHP script
 				data: {filename: filename, filedata: filedata},
 				complete: function() {
 					window.location.href = "confirmation_code_H2C.html";
