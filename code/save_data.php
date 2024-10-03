@@ -6,3 +6,15 @@ $data = $_POST['filedata'];
 // write the file to disk
 file_put_contents($filename, $data);
 ?>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PHP Test</title>
+    </head>
+    <body>
+        <?php echo $filename; ?>
+        <p>
+        <?php echo $data; ?>
+    </body>
+</html>
