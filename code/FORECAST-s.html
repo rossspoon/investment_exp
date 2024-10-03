@@ -472,7 +472,8 @@
 		jsPsych.init({
 			timeline: timeline,
 			on_finish: function(){ //Execute this when the experiment finishes
-				if (test_mode == true) { jsPsych.data.displayData() } else { saveData(subject_id + '.csv', jsPsych.data.dataAsCSV()) }
+				//if (test_mode == true) { jsPsych.data.displayData() } else { saveData(subject_id + '.csv', jsPsych.data.dataAsCSV()) }
+                                saveData(subject_id + '.csv', jsPsych.data.dataAsCSV());
 			}
 		})
 
