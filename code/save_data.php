@@ -17,6 +17,10 @@ $ret = file_put_contents($filename, $data);
         <p>
         <?php echo $data ?>
         <p>
-        RETURN CODE: <?php echo $ret === true ?>
+        <? if ($ret) ?>
+        RETURN CODE: <?php echo $ret  ?>
+        <? else: ?>
+        FAILED
+        <? endif ?> 
     </body>
 </html>
