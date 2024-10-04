@@ -22,5 +22,7 @@ $ret = file_put_contents($filename, $data);
         <? else: ?>
         FAILED
         <? endif ?> 
+        <?php echo __DIR__ ?>
+        <p>
     </body>
 </html>
