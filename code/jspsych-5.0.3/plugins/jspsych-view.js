@@ -34,7 +34,7 @@
 			//trial_data._parameters = trial;
 
 			var timeLeft = trial.total_time;
-			var nFirms = trial.n_firms;
+			var nFirms = trial.random_order_stocks.length
 			var names = trial.names;
 			var prior_mean = trial.prior_mean;
 			var prior_std = trial.prior_std;
@@ -561,7 +561,7 @@
 				var translate = (width + height)/2;
 
 				// Table
-				for (var i = 0; i < nFirms + 1; i++) {
+				for (var i = 0; i < nFirms; i++) {
 
 					$(document.getElementById("table")).append($("<tr>", {
 						"id": "table_" + i,

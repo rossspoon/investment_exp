@@ -1,11 +1,91 @@
 <html>
 <head>
     <title>Test Bed for Investment Experiment</title>
+
+<style>
+body{
+    padding-left: 30px;
+    padding-top: 30px;
+}
+
+.collapse{
+    border-collapse:collapse;
+}
+
+.custom-tab {
+    border: 2px solid gray;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.custom-tab::before{
+    content: "Custom Exp Parameters"
+}
+</style>
+
 </head>
 <body>
-    <p>In this test, I treat the random portion as a percentage return on the investment (-100% to 100%),
-    and increase of decrease the invested amount by that percentage.
-    </p>
-    <a href="code/FORECAST-s.html">Investment Experiment </a>
+    <form method="GET" action="code/INVEST.html">
+
+        <table class="collapse">
+            <tr>
+                <td>Test Mode</td>
+                <td><input type="checkbox" name="test_mode" checked/></td>
+            </tr>
+            <tr>
+                <td>Quick Mode</td>
+                <td><input type="checkbox" name="quick_mode" checked/></td>
+            </tr>
+            <tr>
+                <td>Show Index</td>
+                <td><input type="checkbox" name="show_index" checked/></td>
+            </tr>
+            <tr>
+                <td>Number Periods (both blocks)</td>
+                <td><input type="text" name="n_periods"/></td>
+                <td> Defaults is 20, or 2 for <em>Quick Mode</em></td>
+            </tr>
+            <tr style="border: 2px solid gray;">
+                <td>Experiment Type</td>
+                <td>
+                    <ul>
+                        <li>Variance: <input type="radio" name="exp_type" value="0"/></li>
+                        <li>Time: <input type="radio" name="exp_type" value="1"/></li>
+                        <li>Size: <input type="radio" name="exp_type" value="2"/></li>
+                        <li>Custom: <input type="radio" name="exp_type" value="-1" checked/></li>
+                    </ul>
+            </tr>
+        </table>
+
+        <table class="custom-tab">
+            <tr>
+                <td>&nbsp;</td>
+                <td>Block 0</td>
+                <td>Block 1</td>
+            </tr>
+            <tr>
+                <td>Index Std.</td>
+                <td><input type=text value="5" name="std_I_0"/></td>
+                <td><input type=text value="30" name="std_I_1"/></td>
+            </tr>
+            <tr>
+                <td>Stock Std.</td>
+                <td><input type=text value="30" name="std_S_0"/></td>
+                <td><input type=text value="5" name="std_S_1"/></td>
+            </tr>
+            <tr>
+                <td>N Firms</td>
+                <td><input type=text value="4" name="n_firms_0"/></td>
+                <td><input type=text value="4" name="n_firms_1"/></td>
+            </tr>
+            <tr>
+                <td>Time Limit</td>
+                <td><input type=text value="12" name="time_limit_0"/></td>
+                <td><input type=text value="12" name="time_limit_1"/></td>
+            </tr>
+        </table>
+
+
+        <input type="submit"/>
+    </form>
 </body>
 </html>

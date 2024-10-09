@@ -49,13 +49,18 @@ var dotRadius = 5;
 
 
 //-------------  Adding the text box for investment amount		
-function make_investment_td(idx) {
+function make_investment_td(idx, isempty) {
 
     var td = $("<td>", {
         id: "table_" + idx + "_" + 4,
         class: 'investment-cell',
       },
     );
+
+    if (isempty){
+        td.html = "&nbsp;";
+        return td;
+    }
 
     var div = $("<div>",{
         class: "inv-input-container",
@@ -68,6 +73,23 @@ function make_investment_td(idx) {
         type: "text",
     });
     div.append(text_box);
+
+    return td;
+}
+
+function make_return_td(idx) {
+    var td = $("<td>", {
+        id: "table_" + idx + "_" + "ret",
+        class: 'return-cell',
+      },
+    );
+
+    var return_div= $("<div>", {
+        id: "return_amt_" + idx,
+        class: "return-amt",
+        html: "&nbsp;",
+    });
+    td.append( return_div );
 
     return td;
 }
@@ -97,54 +119,67 @@ function get_info_table(endowment) {
         class: "info-table",
     });
 
-    var header_row = $("<tr>", {
-        id: "info_head",
-        class: "table-head",
+
+    //Endowment Row
+    var endow_row = $("<tr>", {
+        id: "endow_row",
     });
-    table.append(header_row)
+    table.append(endow_row)
+
 
     var head_endow_td = $("<td>", {
-        class: "head-cell",
+        class: "head-cell table-head",
         html: "Endowment",
     });
-    header_row.append(head_endow_td);
-
-    var head_bal_td = $("<td>", {
-        class: "head-cell",
-        html: "Balance",
-    });
-    header_row.append(head_bal_td);
-
-    var head_result_td = $("<td>", {
-        class: "head-cell",
-        html: "Result",
-    });
-    header_row.append(head_result_td);
-
-    // information row
-    var info_row= $("<tr>", {
-        id: "info_head",
-    });
-    table.append(info_row)
+    endow_row.append(head_endow_td);
 
     var endow_td = $("<td>", {
         html: "" + endowment,
     });
-    info_row.append(endow_td);
+    endow_row.append(endow_td);
+
+
+    // Balance Row
+    var balance_row = $("<tr>", {
+        id: "balance_row",
+    });
+    table.append(balance_row);
+
+    var head_bal_td = $("<td>", {
+        class: "head-cell table-head",
+        html: "Balance",
+    });
+    balance_row.append(head_bal_td);
 
     var bal_td = $("<td>", {
         id: "balance_amount",
         html: "" + endowment,
     });
-    info_row.append(bal_td);
+    balance_row.append(bal_td);
+
+    // Result Row
+    var result_row= $("<tr>", {
+        id: "result_row",
+    });
+    table.append(result_row);
+
+    var head_result_td = $("<td>", {
+        class: "head-cell table-head",
+        html: "Result",
+    });
+    result_row.append(head_result_td);
 
     var result_td = $("<td>", {
         id: "result_amount",
         html: "&nbsp;",
     });
-    info_row.append(result_td);
+    result_row.append(result_td);
 
-    return table;
+    // Wrap the info table in a div to control the height
+    var d = $("<div>");
+    d.append(table);
+
+    return d;
 }
 
 function get_spacer_div(instr){
@@ -211,6 +246,8 @@ jsPsych.plugins["invest"] = (function() {
                 trial_data.endowment = trial.endowment;
                 trial_data.balance = trial.endowment;
 
+                trial_data.show_index = trial.show_index;
+
                 //save trial parameters you want to save around here
 
                 var timeLeft = trial.total_time;
@@ -224,6 +261,7 @@ jsPsych.plugins["invest"] = (function() {
                 var instrSpace = instructions == "" ? 0 : 50;
                 var table_header = trial.table_header;
                 var frequency = trial.frequency;
+
 
                 var random_order_stocks = trial.random_order_stocks;
                 var indexIndustry;
@@ -306,21 +344,29 @@ jsPsych.plugins["invest"] = (function() {
                 var feedbackDone = false;
 
                 function feedback () {
-                    total_reward = 0;
+                    var total_reward = 0;
+                    var index_return = 0;
+                    if (show_index) {
+                        index_return = trial.next_period_realizations[indexIndustry];
+                    }
 
                     for (var i = 0; i < nFirms; i++) {
-                            k = random_order_stocks[i];
+                            var k = random_order_stocks[i];
+                            var isIndexRow = names[k] === 'Index';
 
-                            mean = prior_mean[k];
-                            std = prior_std[k];
 
-                            draw = normal(mean, std);
-                            trial_data.returns[i] = draw;
+                            ret = trial.next_period_realizations[k] + index_return;
+                            trial_data.returns[i] = ret;
 
                             inv = Number($("#input_"+i).val());
-                            result = (inv + (draw * inv)/100);
+                            result = (inv + (ret * inv)/100);
                             trial_data.results[i] = result;
 
+                            $("#return_amt_"+i).html(ret + "%");
+
+                            if (isIndexRow){
+                                continue;
+                            }
                             $("#result_amt_"+i).html(result.toFixed(2));
                             total_reward += result;
                     }
@@ -563,32 +609,25 @@ jsPsych.plugins["invest"] = (function() {
                         //Add a div to go behind the fix-in-place header
                         display_element.append( get_spacer_div(instructions) )
 
+
+                        var layout =  $("<div>", {
+                            "id": "layout_div",
+                            "class": "layout",
+                        });
+                        display_element.append(layout);
+
                         //Add Main Information Table
-                        display_element.append( get_info_table(trial_data.endowment) );
+                        layout.append( get_info_table(trial_data.endowment) );
 
                         // Create table
-                        display_element.append($("<table>", {
-                                "id": "table",
-                                "css": {
-
-                                        "position": "relative",
-                                        "width": "80%",
-                                        "min-width": 500,
-                                        "max-width": 700,
-
-                                        "margin-left": "auto",
-                                        "margin-right": "auto",
-
-                                        "margin-bottom": footerHeight + 30,
-                                        "border-collapse": "collapse",
-                                        "background-color": "white",
-                                }
+                        layout.append($("<table>", {
+                                "id": "main_table",
                         }));
 
                         // Column headers
                         if (table_header) {
 
-                                $(document.getElementById("table")).append($("<tr>", {
+                                $(document.getElementById("main_table")).append($("<tr>", {
                                         "id": "table_header",
                                         class: "main-table-row",
                                         "css": {
@@ -619,6 +658,9 @@ jsPsych.plugins["invest"] = (function() {
                                 // investment input
                                 .append(get_header_cell("Investment Amount", 3, "center"))
 
+                                // stock return column
+                                .append(get_header_cell("Return", "ret", "center"))
+
                                 // result column
                                 .append(get_header_cell("Result", 4, "center"))
                                 );
@@ -638,8 +680,9 @@ jsPsych.plugins["invest"] = (function() {
                         for (var i = 0; i < nFirms; i++) {
 
                                 k = random_order_stocks[i];
+                                var isIndexRow = names[k] === 'Index';
 
-                                $(document.getElementById("table")).append($("<tr>", {
+                                $(document.getElementById("main_table")).append($("<tr>", {
                                         "id": "table_" + i,
                                 })
 
@@ -756,7 +799,8 @@ jsPsych.plugins["invest"] = (function() {
                                 })))
 
                                 // endowment or investment text box
-                                .append( make_investment_td(i) )
+                                .append( make_investment_td(i, isIndexRow) )
+                                .append( make_return_td(i) )
                                 .append( make_result_td(i) )
                                 )
                         };
