@@ -1,0 +1,7 @@
+
+<p style='text-align:center'>
+<img src='imgs/style_instructions_factors3.png' style='width:800px'>
+</img>
+</p>
+<p>This game has 10 periods. In each period, you will be shown information about several 'factors' that determine the values of various stocks. There is a specific factor for each stock, and there is one additional factor that describes the market index that respresents the returns of the market as a whole. (These could be shown in a different order than in the image, but that doesn't change anything about what they mean.)
+</p>

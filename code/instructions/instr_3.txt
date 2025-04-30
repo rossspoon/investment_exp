@@ -1,0 +1,12 @@
+
+<p style='text-align:center'>
+<img src='imgs/style_instructions_mean.png' style='width:800px'>
+</img>
+</p>
+<p>Your task in each period is to predict the total value of each stock. This is equal to its stock-specific factor plus the index factor.
+</p>
+<p>For example, if the index factor were 10 and the stock-specific factors for A and B were &#8722;16 and &#8722;53, then the total values of Stocks A and B would be &#8722;6 (= &#8722;16 + 10) and &#8722;43 (= &#8722;53 + 10).
+<br>(Note: you will not make a prediction about the index factor on its own, but it will contribute to each stock's total value.)
+</p>
+<p>However, you will not be given the exact factor values, and instead have to learn about them.
+</p>

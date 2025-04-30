@@ -1,0 +1,9 @@
+
+<p style='text-align:center'>
+<img src='imgs/style_instructions_mouse.gif' style='width:800px'>
+</img>
+</p>
+<p>You have a limited amount of time to learn about the factors. You learn about a factor by mousing over it. The longer your mouse is over a factor, the more information about it you will see.
+</p>
+<p>The pieces of information you receive don't tell you the true factor value exactly, but they are useful clues. Their average is equal to the true factor value. To improve your predictions, you may decide to gather a lot of information about some factors, and a little information (or even none at all) about others.
+</p>

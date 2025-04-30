@@ -1,0 +1,8 @@
+
+<p style='text-align:center'>
+<img src='imgs/style_instructions_invest.png' style='width:800px'>
+</img>
+</p>
+<p>When the timer runs out in each period, you will be asked to invest in the stocks. You will be given 100 units of cash to invest in the stock as shown in the table on the left next to "ENDOWMENT". Make investments by entering your desired amount into the text boxes next to the stock name.As you invest funds, you will see your remaining "BALANCE" adjust.  When you have invested all funds, click the 
+<b>SUBMIT
+</b> button at the bottom of the screen.

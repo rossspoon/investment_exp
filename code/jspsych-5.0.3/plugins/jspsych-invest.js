@@ -344,7 +344,7 @@ jsPsych.plugins["invest"] = (function() {
                 var feedbackDone = false;
 
                 function feedback () {
-                    var total_reward = 0;
+                    var total_reward = trial_data.balance;
                     var index_return = 0;
                     if (show_index) {
                         index_return = trial.next_period_realizations[indexIndustry];
@@ -534,7 +534,8 @@ jsPsych.plugins["invest"] = (function() {
 
                 fwrap.append($("<div>", {
                         "id": "proceed",
-                        class: "btn btn-off",
+                        //class: "btn btn-off",
+                        class: "btn btn-on",
                 })
                 .append($("<p>", {
                         html: "submit",
@@ -1201,7 +1202,7 @@ jsPsych.plugins["invest"] = (function() {
                 clearTimeout(time_out_identifier);
             }
             $('.inv-input-container').removeClass('inv-err');
-            $('#proceed').removeClass('btn-on');
+            //$('#proceed').removeClass('btn-on');
 
             this.value = this.value.replace(/[^0-9]/g, '');
 
@@ -1240,11 +1241,13 @@ jsPsych.plugins["invest"] = (function() {
                 current_balance = trial_data.balance;
 
 
+                /*
                 if (sum == trial_data.endowment){
                     $('#proceed').addClass('btn-on');
                 } else {
                     $('#proceed').removeClass('btn-on');
                 }
+                */
             }, 500);
         });
 

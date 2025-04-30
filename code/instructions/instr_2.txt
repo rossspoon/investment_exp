@@ -1,0 +1,9 @@
+
+<p style='text-align:center'>
+<img src='imgs/style_instructions_prior_var.png' style='width:800px'>
+</img>
+</p>
+<p>Across periods, each factor might vary a lot or a little. This is indicated by the sideways bell curves, which can be wider (if the true factor values could be very big) or narrower (if they are likely close to zero).
+</p>
+<p>What happens in one period has no effect on what happens in any other period.
+</p>
