@@ -36,8 +36,12 @@ body{
                 <td><input type="checkbox" name="quick_mode" checked/></td>
             </tr>
             <tr>
+                <td>Show Survey</td>
+                <td><input type="checkbox" name="show_survey" checked/></td>
+            </tr>
+            <tr>
                 <td>Show Index</td>
-                <td><input type="checkbox" name="show_index" checked/></td>
+                <td><input type="checkbox" name="show_index" /></td>
             </tr>
             <tr>
                 <td>Number Periods (both blocks)</td>
@@ -69,18 +73,28 @@ body{
             </tr>
             <tr>
                 <td>Stock Std.</td>
-                <td><input type=text value="30" name="std_S_0"/></td>
-                <td><input type=text value="5" name="std_S_1"/></td>
+                <td><input type=text value="5,30" name="std_S_0"/></td>
+                <td><input type=text value="30,30" name="std_S_1"/></td>
+            </tr>
+            <tr>
+                <td>Stock Means</td>
+                <td><input type=text value="0,0" name="mean_S_0"/></td>
+                <td><input type=text value="0,0" name="mean_S_1"/></td>
             </tr>
             <tr>
                 <td>N Firms</td>
-                <td><input type=text value="4" name="n_firms_0"/></td>
-                <td><input type=text value="4" name="n_firms_1"/></td>
+                <td><input type=text value="2" name="n_firms_0"/></td>
+                <td><input type=text value="2" name="n_firms_1"/></td>
             </tr>
             <tr>
                 <td>Time Limit</td>
                 <td><input type=text value="12" name="time_limit_0"/></td>
                 <td><input type=text value="12" name="time_limit_1"/></td>
+            </tr>
+            <tr>
+                <td>NPR Freq</td>
+                <td><input type=text value="250,1000" name="npr_freq_0"/></td>
+                <td><input type=text value="500,500" name="npr_freq_1"/></td>
             </tr>
         </table>
 

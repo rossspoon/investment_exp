@@ -48,16 +48,36 @@
                     }
                 }
 
+                function arr_get_or(pname, def){
+                    txt = '';
+                    if (params.has(pname)){
+                        txt = params.get(pname)
+                    }
+                    if (param === ''){
+                        return def;
+                    } else {
+                        return txt.split(',').map(Number);
+                    }
+                }
+
                 // Parameters
 		var test_mode = get_or('test_mode', false) === 'on';
 		var quick_mode = get_or('quick_mode', false) === 'on';
 		var exp_type = parseInt(get_or('exp_type', -1));
                 var show_index = get_or('show_index', false) === 'on';
+		var show_survey = get_or('show_survey', false) === 'on';
 
 		var treatments = ["variance", "size", "time"];
 		var blocks = jsPsych.randomization.shuffle([0,1]); // block order
 
                 var NAMES = ["Index", "Stock A", "Stock B", "Stock C", "Stock D", "Stock E", "Stock F", "Stock G", "Stock H"]
+
+		// Timing/NPR parameters
+                var npr_freq_0 = arr_get_or('npr_freq_0', [500, 500]);
+                var npr_freq_1 = arr_get_or('npr_freq_1', [500, 500]);
+		var npr_frequency = [npr_freq_0, npr_freq_1];
+		var error_std = 10; //standard deviation of npr errors
+
 
 		// pick a random condition for the subject at the start of the experiment
 		// var condition_assignment = jsPsych.randomization.shuffle(['conditionA', 'conditionB', 'conditionC'], 1)[0];
@@ -87,8 +107,8 @@
                         var std_I_1 = parseInt(get_or('std_I_1', 30));
 			var prior_std_I = [std_I_0, std_I_1]; // standard deviation of industry factor prior
 
-                        var std_S_0 = parseInt(get_or('std_S_0', 30));
-                        var std_S_1 = parseInt(get_or('std_S_1', 5));
+                        var std_S_0 = arr_get_or('std_S_0', [30,30]);
+                        var std_S_1 = arr_get_or('std_S_1', [30,30]);
 			var prior_std_S = [std_S_0, std_S_1]; // standard deviation of stock-specific factor priors
 
                         var nf_0 = parseInt(get_or('n_firms_0', 4));
@@ -111,8 +131,8 @@
                     var start_index = 1;
                     var n_rows = n_firms;
                     var prior_mean = [Array(n_rows[0]).fill(0), Array(n_rows[1]).fill(0)];
-                    var prior_std = [Array(n_rows[0]).fill(prior_std_S[0]),
-                                    Array(n_rows[1]).fill(prior_std_S[1])];
+                    var prior_std = [std_S_0, std_S_1]
+                                    
                 }
                 var names = [NAMES.slice(start_index, n_firms[0]+1),
                             NAMES.slice(start_index, n_firms[1]+1)];
@@ -124,9 +144,6 @@
 		var practice_prior_std = [[8, 30, 30, 30, 30, 30], [30, 8, 8, 8, 8, 8]];
 		var practice_factors = [[10, 50, 25, 0, -25, -50], [-30, -10, -2, 0, 2, 10]];
 
-		// Timing/NPR parameters
-		var npr_frequency = 0.5*1000; //(milli)seconds per npr
-		var error_std = 10; //standard deviation of npr errors
 
 		// Reward parameters
 		var a = 6;
@@ -159,7 +176,7 @@
 					x = Math.round(normal(prior_mean[blocks[0]][j], prior_std[blocks[0]][j]))
 					histories[i].push(x); }
 			} else {
-					for (var j = 0; j < n_rows[blocks[1]]; j++) {
+                                for (var j = 0; j < n_rows[blocks[1]]; j++) {
 					x = Math.round(normal(prior_mean[blocks[1]][j], prior_std[blocks[1]][j]))
 					histories[i].push(x); }
 			}
@@ -432,7 +449,7 @@
 					error_std: error_std,
 					error_mean: 0,
 					table_header: true,
-					frequency: npr_frequency,
+					frequency: npr_frequency[0],
 					random_order_stocks: practice_random_order_stocks,
 					yMax: 100,
 					yMin: -100,
@@ -497,7 +514,7 @@
 					error_std: error_std,
 					error_mean: 0,
 					table_header: true,
-					frequency: npr_frequency,
+					frequency: npr_frequency[bl],
 					random_order_stocks: random_order_stocks[bl],
 					yMax: 100,
 					yMin: -100,
@@ -534,12 +551,12 @@
 
 		}
 
-	//if (!quick_mode) {
+	if (!quick_mode || show_survey) {
                     timeline.push(strategy_block);
                     timeline.push(comment_block);
                     timeline.push(age_block);
                     timeline.push(worker_id_input);
-	//}
+	}
 		timeline.push(bonus_block);
 		timeline.push(debrief_block);
 

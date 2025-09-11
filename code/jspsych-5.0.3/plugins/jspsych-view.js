@@ -69,6 +69,7 @@
 			}
 
 			var over = nFirms + 1;
+                        var overInterval = null;
 
 			var windowWidth = window.innerWidth;
 			var windowHeight = window.innerHeight;
@@ -433,14 +434,18 @@
 					minutes = ("0" + minutes).slice(-2);
 					seconds = ("0" + seconds).slice(-2);
 
-					if (isNaN(seconds)) { document.getElementById("timer").innerHTML = "00:00" } else { document.getElementById("timer").innerHTML = minutes + ":" + seconds }
+					if (isNaN(seconds)) { 
+                                            document.getElementById("timer").innerHTML = "00:00" 
+                                        } else {
+                                            document.getElementById("timer").innerHTML = minutes + ":" + seconds 
+                                        }
 
 					var later = new Date().getTime();
-					if (later - lastNPR >= frequency) {
-						lastNPR = new Date().getTime();
-						updateNPR()
-						if (typeof npr_chart !== 'undefined') npr_chart.update();
-					}
+					//if (later - lastNPR >= frequency) {
+					//	lastNPR = new Date().getTime();
+					//	updateNPR()
+					//	if (typeof npr_chart !== 'undefined') npr_chart.update();
+					//}
 
 					latest = new Date().getTime();
 					if (latest >= trial_data.userStart + timeLeft) done()
@@ -724,39 +729,40 @@
 				for (var i = 0; i < nFirms+1; i++) NPR_plot_last_n.push([]);
 				for (var i = 0; i < nFirms+1; i++) NPR_plot_last_1.push([]);
 
-				function updateNPR () {
+				function updateNPR (x) {
 
-					if (over < nFirms+1) {
+                                    // true_val = histories[t][random_order_stocks[over]];
+                                    true_val = trial.next_period_realizations[random_order_stocks[over]];
 
-						// true_val = histories[t][random_order_stocks[over]];
-						true_val = trial.next_period_realizations[random_order_stocks[over]];
-						error = normal(trial.error_mean, trial.error_std);
-						while ((error > trial.error_mean + 4.5 * trial.error_std) || (error < trial.error_mean - 4.5 * trial.error_std)) error = normal(trial.error_mean, trial.error_std);
+                                    std = prior_std[x];
+                                    error = normal(trial.error_mean, std);
+                                    while ((error > trial.error_mean + 4.5 * std) || (error < trial.error_mean - 4.5 * std)) {
+                                        error = normal(trial.error_mean, std);
+                                    }
 
-						npr = true_val + error;
-						npr = Math.round(npr);
+                                    npr = true_val + error;
+                                    npr = Math.round(npr);
 
-						NPR_plot[over].push({x:1, y:npr});
-						NPR_plot_last_1[over].push({x:1, y:npr});
-						trial_data.npr_index.push(random_order_stocks[over]);
-						trial_data.npr_val.push(npr);
-						trial_data.npr_time.push((new Date()).getTime() - trial_data.userStart);
-						trial_data.npr_last[random_order_stocks[over]] = npr;
+                                    NPR_plot[over].push({x:1, y:npr});
+                                    NPR_plot_last_1[over].push({x:1, y:npr});
+                                    trial_data.npr_index.push(random_order_stocks[over]);
+                                    trial_data.npr_val.push(npr);
+                                    trial_data.npr_time.push((new Date()).getTime() - trial_data.userStart);
+                                    trial_data.npr_last[random_order_stocks[over]] = npr;
 
-						// JavaScript weirdness.
-						while (NPR_plot_last_n[over].length > 0) NPR_plot_last_n[over].pop();
-						while (NPR_plot_last_1[over].length > 0) NPR_plot_last_1[over].pop();
+                                    // JavaScript weirdness.
+                                    while (NPR_plot_last_n[over].length > 0) NPR_plot_last_n[over].pop();
+                                    while (NPR_plot_last_1[over].length > 0) NPR_plot_last_1[over].pop();
 
-						var tmp = NPR_plot[over].slice(Math.max(0, NPR_plot[over].length - n_display), NPR_plot[over].length);
+                                    var tmp = NPR_plot[over].slice(Math.max(0, NPR_plot[over].length - n_display), NPR_plot[over].length);
 
-						for (var i = 0; i < tmp.length; i++) NPR_plot_last_n[over].push(tmp[i]);
+                                    for (var i = 0; i < tmp.length; i++) NPR_plot_last_n[over].push(tmp[i]);
 
-						NPR_plot_last_1[over].push({x:1, y:npr})
+                                    NPR_plot_last_1[over].push({x:1, y:npr})
 
-					}
+                                    if (typeof npr_chart !== 'undefined') npr_chart.update();
 				}
 
-				updateNPR()
 
 				var update;
 				var cvs_npr;
@@ -835,12 +841,11 @@
 				var all_charts = [];
 
 				// densities
-				for (var i = 0; i < nFirms + 1; i++) {
+				for (var i = 0; i < nFirms; i++) {
 
 					const ii = i;
 					var npr_chart;
 					var density_chart;
-
 					cvs_npr = document.getElementById("canvas_" + ii + "_npr").getContext("2d");
 					cvs_density = document.getElementById("canvas_" + ii + "_density").getContext("2d");
 
@@ -1010,10 +1015,11 @@
 						function () {
 
 							over = ii;
-							npr_chart = all_charts[over];
+							npr_chart = all_charts[ii];
+                                                        overInterval = setInterval(updateNPR, frequency[ii], ii);
 
-							npr_chart.data.datasets[0].data = NPR_plot_last_1[over];
-							npr_chart.data.datasets[1].data = NPR_plot_last_n[over];
+							npr_chart.data.datasets[0].data = NPR_plot_last_1[ii];
+							npr_chart.data.datasets[1].data = NPR_plot_last_n[ii];
 
 							$(document.getElementById("canvas_" + ii + "_density")).css("visibility","visible")
 
@@ -1024,14 +1030,16 @@
 							$(document.getElementById("table_" + ii + "_4")).css("background-color",colTable_In4)
 							$(document.getElementById("table_" + ii + "_5")).css("background-color",colTable_In4)
 
-							trial_data.eventTimes_index.push(random_order_stocks[over])
+							trial_data.eventTimes_index.push(random_order_stocks[ii])
 							trial_data.eventTimes_time.push((new Date()).getTime() - trial_data.userStart)
 
 						},
 
 						function () {
 
-							mouseTimes[random_order_stocks[over]] += ((new Date()).getTime()) - trial_data.userStart - trial_data.eventTimes_time.slice(-1)[0];
+                                                        clearInterval(overInterval);
+
+							mouseTimes[random_order_stocks[ii]] += ((new Date()).getTime()) - trial_data.userStart - trial_data.eventTimes_time.slice(-1)[0];
 						
 							over = nFirms + 1;
 
@@ -1051,7 +1059,7 @@
 				}
 
 				// Charts
-				for (var i = 0; i < nFirms + 1; i++) {
+				for (var i = 0; i < nFirms; i++) {
 
 					const ii = i;
 
