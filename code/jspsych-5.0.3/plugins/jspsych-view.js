@@ -27,13 +27,15 @@
 			trial_data.npr_val = [];
 			trial_data.npr_time = [];
 			trial_data.npr_last = [];
+                        trial_data.test_mode = trial.test_mode;
+                        trial_data.frequency = trial.frequency;
 
 
 			//----------------------- trial parameters -----------------------
 
 			//trial_data._parameters = trial;
 
-			var timeLeft = trial.total_time;
+			var total_time = trial.total_time;
 			var nFirms = trial.random_order_stocks.length
 			var names = trial.names;
 			var prior_mean = trial.prior_mean;
@@ -45,6 +47,7 @@
 			var table_header = trial.table_header;
 			var frequency = trial.frequency;
 			var random_order_stocks = trial.random_order_stocks;
+                        var test_mode = trial.test_mode;
 
 			var mouseTimes = [];
 			for (var i = 0; i < nFirms + 2; i++) mouseTimes.push(0);
@@ -171,7 +174,7 @@
 				clearInterval(countDown);
 
 				trial_data.doneTime = (new Date()).getTime();
-				trial_data.timeLeft = timeLeft;
+				trial_data.time = total_time;
 				trial_data.mouseTimes = mouseTimes;
 
 				trial_data.componentTimes = trial_data.mouseTimes.map(function (el) { return el / 1000; })
@@ -327,11 +330,16 @@
 			})));
 
 
-			var minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-			var seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+			var minutes = Math.floor(total_time / 60);
+			var seconds = Math.floor(total_time % 60);
 			minutes = ("0" + minutes).slice(-2);
 			seconds = ("0" + seconds).slice(-2);
-			if (isNaN(seconds)) { document.getElementById("timer").innerHTML = "00:00" } else { document.getElementById("timer").innerHTML = minutes + ":" + seconds }
+			if (isNaN(seconds)) { 
+                            document.getElementById("timer").innerHTML = "00:00" 
+                        }
+                        else {
+                            document.getElementById("timer").innerHTML = minutes + ":" + seconds
+                        }
 
 			display_element.append($("<p>", {
 				"id": "toStart",
@@ -417,19 +425,16 @@
 
 
 				// for count down
-				var lastNPR = new Date().getTime();
 				var now = new Date().getTime();
 				var latest = new Date().getTime();
+                                var timeLeft = total_time
 				
-				// Update count down and NPRs
+				// Update count down 
 				countDown = setInterval(function() {
+                                        timeLeft -= 1;
 
-					// Get todays date and time
-					now = new Date().getTime();
-					var timeRemaining = trial_data.userStart + timeLeft - now;
-
-					minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-					seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+					minutes = Math.floor(timeLeft/ 60);
+					seconds = Math.floor(timeLeft% 60);
 
 					minutes = ("0" + minutes).slice(-2);
 					seconds = ("0" + seconds).slice(-2);
@@ -439,18 +444,12 @@
                                         } else {
                                             document.getElementById("timer").innerHTML = minutes + ":" + seconds 
                                         }
-
-					var later = new Date().getTime();
-					//if (later - lastNPR >= frequency) {
-					//	lastNPR = new Date().getTime();
-					//	updateNPR()
-					//	if (typeof npr_chart !== 'undefined') npr_chart.update();
-					//}
-
-					latest = new Date().getTime();
-					if (latest >= trial_data.userStart + timeLeft) done()
+                                        
+					if (timeLeft <= 0) {
+                                            done();
+                                        }
 						
-				}, 10 - (latest - now));
+				}, 1000);
 
 				display_element.append($("<table>", {
 					"id": "table",
@@ -592,34 +591,6 @@
 						}
 					}))
 
-					// y-axis
-					.append($("<td>", {
-						id: "table_" + i + "_" + 1,
-						css: {
-							"min-width": 50,
-							"max-width": 50,
-							"width": 50,
-							"height": 90,
-							"background-color": colTable_Out,
-							"text-align": "right",
-							"padding": 0,
-							"margin": 0,
-							"border-bottom": "solid 1px rgba(0,0,0,0.1)",
-						},
-					})
-					.append($("<canvas>", {
-						id: "canvas_" + i + "_axis",
-						css: {
-							"position": "relative",
-							"display": "block",
-							"background-color": "none",
-							"margin": 0,
-							"padding": 0,
-							"height": 80,
-							"visibility": "visible"
-						},
-					})))
-
 					// density
 					.append($("<td>", {
 						id: "table_" + i + "_" + 2,
@@ -651,6 +622,34 @@
 							"height": height,
 							"transform": "rotate(270deg) translateX(-" + translate + "px)",
 							"transform-origin": "0 0",
+						},
+					})))
+
+					// y-axis
+					.append($("<td>", {
+						id: "table_" + i + "_" + 1,
+						css: {
+							"min-width": 50,
+							"max-width": 50,
+							"width": 50,
+							"height": 90,
+							"background-color": colTable_Out,
+							"text-align": "right",
+							"padding": 0,
+							"margin": 0,
+							"border-bottom": "solid 1px rgba(0,0,0,0.1)",
+						},
+					})
+					.append($("<canvas>", {
+						id: "canvas_" + i + "_axis",
+						css: {
+							"position": "relative",
+							"display": "block",
+							"background-color": "none",
+							"margin": 0,
+							"padding": 0,
+							"height": 80,
+							"visibility": "visible"
 						},
 					})))
 
@@ -688,7 +687,7 @@
 
 					// slider + slider val
 					.append($("<td>", {
-						html: "XXXXXXXXXXXX",
+						html: "&nbsp;",
 						id: "table_" + i + "_" + 4,
 						css: {
 							"min-width": "200px",
@@ -702,7 +701,7 @@
 						},
 					}))
 					.append($("<td>", {
-						html: "XXXXXXX",
+						html: "&nbsp;",
 						id: "table_" + i + "_" + 5,
 						css: {
 							"min-width": "150px",
@@ -731,10 +730,10 @@
 
 				function updateNPR (x) {
 
-                                    // true_val = histories[t][random_order_stocks[over]];
-                                    true_val = trial.next_period_realizations[random_order_stocks[over]];
+                                    // true_val = histories[t][x];
+                                    true_val = trial.next_period_realizations[x];
 
-                                    std = prior_std[x];
+                                    std = prior_std[x]
                                     error = normal(trial.error_mean, std);
                                     while ((error > trial.error_mean + 4.5 * std) || (error < trial.error_mean - 4.5 * std)) {
                                         error = normal(trial.error_mean, std);
@@ -745,10 +744,10 @@
 
                                     NPR_plot[over].push({x:1, y:npr});
                                     NPR_plot_last_1[over].push({x:1, y:npr});
-                                    trial_data.npr_index.push(random_order_stocks[over]);
+                                    trial_data.npr_index.push(x);
                                     trial_data.npr_val.push(npr);
                                     trial_data.npr_time.push((new Date()).getTime() - trial_data.userStart);
-                                    trial_data.npr_last[random_order_stocks[over]] = npr;
+                                    trial_data.npr_last[x] = npr;
 
                                     // JavaScript weirdness.
                                     while (NPR_plot_last_n[over].length > 0) NPR_plot_last_n[over].pop();
@@ -1014,9 +1013,10 @@
 
 						function () {
 
-							over = ii;
+                                                        over = ii;
 							npr_chart = all_charts[ii];
-                                                        overInterval = setInterval(updateNPR, frequency[ii], ii);
+                                                        ridx = random_order_stocks[ii]
+                                                        overInterval = setInterval(updateNPR, frequency[ridx], ridx);
 
 							npr_chart.data.datasets[0].data = NPR_plot_last_1[ii];
 							npr_chart.data.datasets[1].data = NPR_plot_last_n[ii];
@@ -1030,18 +1030,17 @@
 							$(document.getElementById("table_" + ii + "_4")).css("background-color",colTable_In4)
 							$(document.getElementById("table_" + ii + "_5")).css("background-color",colTable_In4)
 
-							trial_data.eventTimes_index.push(random_order_stocks[ii])
+							trial_data.eventTimes_index.push(ridx)
 							trial_data.eventTimes_time.push((new Date()).getTime() - trial_data.userStart)
 
 						},
 
 						function () {
 
+                                                        over = n_rows+1;
                                                         clearInterval(overInterval);
 
 							mouseTimes[random_order_stocks[ii]] += ((new Date()).getTime()) - trial_data.userStart - trial_data.eventTimes_time.slice(-1)[0];
-						
-							over = nFirms + 1;
 
 							$(document.getElementById("table_" + ii + "_0")).css("background-color",colTable_0_Out)
 							$(document.getElementById("table_" + ii + "_1")).css("background-color",colTable_Out)

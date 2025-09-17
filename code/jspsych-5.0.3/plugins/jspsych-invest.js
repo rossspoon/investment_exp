@@ -53,7 +53,7 @@ function make_investment_td(idx, isempty) {
 
     var td = $("<td>", {
         id: "table_" + idx + "_" + 4,
-        class: 'investment-cell',
+        class: 'investment-cell td_field',
       },
     );
 
@@ -73,6 +73,7 @@ function make_investment_td(idx, isempty) {
         type: "text",
     });
     div.append(text_box);
+    div.append("&nbsp; %");
 
     return td;
 }
@@ -80,7 +81,7 @@ function make_investment_td(idx, isempty) {
 function make_return_td(idx) {
     var td = $("<td>", {
         id: "table_" + idx + "_" + "ret",
-        class: 'return-cell',
+        class: 'return-cell td_field',
       },
     );
 
@@ -99,7 +100,7 @@ function make_return_td(idx) {
 function make_result_td(idx){
     var td = $("<td>", {
         id: "table_" + idx + "_5",
-        class: "result-cell",
+        class: "result-cell td_field",
     });
 
     var result_div= $("<div>", {
@@ -112,75 +113,94 @@ function make_result_td(idx){
     return td;
 }
 
-
-function get_info_table(endowment) {
-    var table = $("<table>", {
-        id: "info_table",
-        class: "info-table",
+function make_cash_row() {
+    var row = $("<tr>", {
+        id: "cash_row",
+        class: "tr_main",
     });
 
-
-    //Endowment Row
-    var endow_row = $("<tr>", {
-        id: "endow_row",
+    var name_td = $("<td>", {
+                id: "cash_idx",
+                class: 'idx_td',
+                html: 'Cash',
     });
-    table.append(endow_row)
-
-
-    var head_endow_td = $("<td>", {
-        class: "head-cell table-head",
-        html: "Endowment",
+    row.append(name_td);
+    
+    // skip the three graphic td's with a colspan 3
+    var graph_td = $("<td>", {
+                id: "cash_graph",
+                class: 'td_field',
+                colspan: 3,
+                html: '&nbsp',
     });
-    endow_row.append(head_endow_td);
-
-    var endow_td = $("<td>", {
-        html: "" + endowment,
+    row.append(graph_td);
+    
+    //investment amt
+    var inv_td = make_investment_td('c', false);
+    row.append(inv_td);
+    
+    var ret_td = $("<td>", {
+                id: "cash_ret",
+                class: 'td_field',
+                html: '&nbsp',
     });
-    endow_row.append(endow_td);
+    row.append(ret_td);
+    
+    var res_td = make_return_td('c');
+    row.append(res_td);
 
+    return row;
+}
 
-    // Balance Row
-    var balance_row = $("<tr>", {
-        id: "balance_row",
+function make_totals_row() {
+    var row = $("<tr>", {
+        id: "totals_row",
+        class: "tr_bottom",
     });
-    table.append(balance_row);
 
-    var head_bal_td = $("<td>", {
-        class: "head-cell table-head",
-        html: "Balance",
+    var name_td = $("<td>", {
+                id: "totals_idx",
+                class: 'idx_td_bottom',
+                html: 'Total',
     });
-    balance_row.append(head_bal_td);
-
-    var bal_td = $("<td>", {
-        id: "balance_amount",
-        html: "" + endowment,
+    row.append(name_td);
+    
+    // skip the three graphic td's with a colspan 3
+    var graph_td = $("<td>", {
+                id: "totals_graph",
+                class: 'td_bottom',
+                colspan: 3,
+                html: '&nbsp',
     });
-    balance_row.append(bal_td);
-
-    // Result Row
-    var result_row= $("<tr>", {
-        id: "result_row",
-    });
-    table.append(result_row);
-
-    var head_result_td = $("<td>", {
-        class: "head-cell table-head",
-        html: "Result",
-    });
-    result_row.append(head_result_td);
-
-    var result_td = $("<td>", {
-        id: "result_amount",
+    row.append(graph_td);
+    
+    // Total Investment cell
+    var tot_td = $("<td>", {
+        id: "totals_tot",
+        class: 'td_bottom',
         html: "&nbsp;",
     });
-    result_row.append(result_td);
+    row.append(tot_td);
+    
+    // skip the return column
+    var graph_td = $("<td>", {
+                id: "totals_ret",
+                class: 'td_bottom',
+                html: '&nbsp',
+    });
+    row.append(graph_td);
+    
+    // Total Result cell
+    var res_td = $("<td>", {
+        id: "totals_res",
+        class: 'td_bottom',
+        html: "&nbsp;",
+    });
+    row.append(res_td);
 
-    // Wrap the info table in a div to control the height
-    var d = $("<div>");
-    d.append(table);
-
-    return d;
+    return row;
 }
+
 
 function get_spacer_div(instr){
     var div = $("<div>", {
@@ -244,7 +264,7 @@ jsPsych.plugins["invest"] = (function() {
                 trial_data.show_history = trial.show_history;
 
                 trial_data.endowment = trial.endowment;
-                trial_data.balance = trial.endowment;
+                trial_data.balance = 0
 
                 trial_data.show_index = trial.show_index;
 
@@ -260,7 +280,6 @@ jsPsych.plugins["invest"] = (function() {
                 var instructions = trial.instructions;
                 var instrSpace = instructions == "" ? 0 : 50;
                 var table_header = trial.table_header;
-                var frequency = trial.frequency;
 
 
                 var random_order_stocks = trial.random_order_stocks;
@@ -300,6 +319,7 @@ jsPsych.plugins["invest"] = (function() {
                 var colFill = fillPattern;
                 //------------------------- end Charts --------------------
 
+            console.log("SH: ", trial.show_history);
                 if (trial.show_history) {
                         var npr_data_1 = jsPsych.data.getLastTrialData().npr_last_1;
                         var npr_data_n = jsPsych.data.getLastTrialData().npr_last_n;
@@ -341,14 +361,14 @@ jsPsych.plugins["invest"] = (function() {
                 rowHeight--
 
 
-                var feedbackDone = false;
-
                 function feedback () {
                     var total_reward = trial_data.balance;
                     var index_return = 0;
                     if (show_index) {
                         index_return = trial.next_period_realizations[indexIndustry];
                     }
+
+                    $('.inv-input').prop('disabled', true);
 
                     for (var i = 0; i < nFirms; i++) {
                             var k = random_order_stocks[i];
@@ -362,7 +382,7 @@ jsPsych.plugins["invest"] = (function() {
                             result = (inv + (ret * inv)/100);
                             trial_data.results[i] = result;
 
-                            $("#return_amt_"+i).html(ret + "%");
+                            $("#return_amt_"+i).html(ret + "&nbsp;%");
 
                             if (isIndexRow){
                                 continue;
@@ -371,7 +391,15 @@ jsPsych.plugins["invest"] = (function() {
                             total_reward += result;
                     }
 
-                    $("#result_amount").html(total_reward.toFixed(2));
+
+                    //Cash Row
+                    //Just copy the input value to the result cell
+                    cash_ret = Number($("#input_c").val());
+                    $("#return_amt_c").html(cash_ret.toFixed(2));
+                    total_reward += cash_ret;
+
+
+                    $("#totals_res").html(total_reward.toFixed(2) + "&nbsp;%");
                     trial_data.total_result= total_reward;
 
                     clearInterval(countDown)
@@ -617,9 +645,6 @@ jsPsych.plugins["invest"] = (function() {
                         });
                         display_element.append(layout);
 
-                        //Add Main Information Table
-                        layout.append( get_info_table(trial_data.endowment) );
-
                         // Create table
                         layout.append($("<table>", {
                                 "id": "main_table",
@@ -676,6 +701,7 @@ jsPsych.plugins["invest"] = (function() {
                         var translate = (width + height)/2;
 
                         var k;
+                        var main_table = $(document.getElementById("main_table"))
 
                         // Fill table
                         for (var i = 0; i < nFirms; i++) {
@@ -683,57 +709,17 @@ jsPsych.plugins["invest"] = (function() {
                                 k = random_order_stocks[i];
                                 var isIndexRow = names[k] === 'Index';
 
-                                $(document.getElementById("main_table")).append($("<tr>", {
+                                main_table.append($("<tr>", {
                                         "id": "table_" + i,
+                                        "class": "tr_main",
                                 })
 
                                 // names
                                 .append($("<td>", {
                                         "id": "table_" + i + "_" + 0,
                                         "html": names[k],
-                                        "css": {
-                                                "vertical-align": "middle",
-                                                "text-align": "left",
-                                                "font-size": 16,
-                                                "font-family": "Roboto, sans-serif",
-                                                "font-weight": "300",
-                                                "color": "rgba(255, 255, 255, .85)",
-                                                "width": 150,
-                                                "background-color": colTable_0_Out,
-                                                "padding-right": 25,
-                                                "padding-left": 25,
-                                                "text-transform": "none",
-                                                "border-bottom": "solid 1px rgba(0,0,0,.1)",
-                                        }
+                                        "class": "idx_td",
                                 }))
-
-                                // y-axis
-                                .append($("<td>", {
-                                        id: "table_" + i + "_" + 1,
-                                        css: {
-                                                "min-width": 50,
-                                                "max-width": 50,
-                                                "width": 50,
-                                                "height": 90,
-                                                "background-color": colTable_Out,
-                                                "text-align": "right",
-                                                "padding": 0,
-                                                "margin": 0,
-                                                "border-bottom": "solid 1px rgba(0,0,0,0.1)",
-                                        },
-                                })
-                                .append($("<canvas>", {
-                                        id: "canvas_" + i + "_axis",
-                                        css: {
-                                                "position": "relative",
-                                                "display": "block",
-                                                "background-color": "none",
-                                                "margin": 0,
-                                                "padding": 0,
-                                                "height": 80,
-                                                "visibility": "visible"
-                                        },
-                                })))
 
                                 // density
                                 .append($("<td>", {
@@ -763,11 +749,38 @@ jsPsych.plugins["invest"] = (function() {
                                                 "background-color": "none",
                                                 "margin": 0,
                                                 "padding": 0,
-                                                "height": height,
                                                 "transform": "rotate(270deg) translateX(-" + translate + "px)",
                                                 "transform-origin": "0 0",
                                         },
                                 })))
+
+                                // y-axis
+                                .append($("<td>", {
+                                        id: "table_" + i + "_" + 1,
+                                        css: {
+                                                "min-width": 50,
+                                                "max-width": 50,
+                                                "width": 50,
+                                                "background-color": colTable_Out,
+                                                "text-align": "right",
+                                                "padding": 0,
+                                                "margin": 0,
+                                                "border-bottom": "solid 1px rgba(0,0,0,0.1)",
+                                        },
+                                })
+                                .append($("<canvas>", {
+                                        id: "canvas_" + i + "_axis",
+                                        css: {
+                                                "position": "relative",
+                                                "display": "block",
+                                                "background-color": "none",
+                                                "margin": 0,
+                                                "padding": 0,
+                                                "height": 80,
+                                                "visibility": "visible"
+                                        },
+                                })))
+
 
                                 // npr
                                 .append($("<td>", {
@@ -791,7 +804,6 @@ jsPsych.plugins["invest"] = (function() {
                                                 "max-width": 70,
                                                 "width": 70,
                                                 "display": "block",
-                                                "height": 69,
                                                 "background-color": "none",
                                                 "margin": 0,
                                                 "padding": 0,
@@ -805,6 +817,12 @@ jsPsych.plugins["invest"] = (function() {
                                 .append( make_result_td(i) )
                                 )
                         };
+
+                        // Cash Row
+                        main_table.append(make_cash_row());
+
+                        // Total Row
+                        main_table.append(make_totals_row());
 
 
                         var error;
@@ -1072,33 +1090,14 @@ jsPsych.plugins["invest"] = (function() {
                                 $(document.getElementById("table_" + i)).hover(
 
                                         function () {
-
                                                 over = ii;
                                                 npr_chart = all_charts[over];
-
                                                 $(document.getElementById("canvas_" + ii + "_density")).css("visibility","visible")
-
-                                                $(document.getElementById("table_" + ii + "_0")).css("background-color",colTable_0_In)
-                                                $(document.getElementById("table_" + ii + "_1")).css("background-color",colTable_In)
-                                                $(document.getElementById("table_" + ii + "_2")).css("background-color",colTable_In)
-                                                $(document.getElementById("table_" + ii + "_3")).css("background-color",colTable_In)
-                                                $(document.getElementById("table_" + ii + "_4")).css("background-color",colTable_In4)
-                                                $(document.getElementById("table_" + ii + "_5")).css("background-color",colTable_In4)
 
                                         },
 
                                         function () {
-
-
                                                 over = nFirms + 1;
-
-                                                $(document.getElementById("table_" + ii + "_0")).css("background-color",colTable_0_Out)
-                                                $(document.getElementById("table_" + ii + "_1")).css("background-color",colTable_Out)
-                                                $(document.getElementById("table_" + ii + "_2")).css("background-color",colTable_Out)
-                                                $(document.getElementById("table_" + ii + "_3")).css("background-color",colTable_Out)
-                                                $(document.getElementById("table_" + ii + "_4")).css("background-color",x7)
-                                                $(document.getElementById("table_" + ii + "_5")).css("background-color",x7)
-
                                         },
                                 )
 
@@ -1237,17 +1236,15 @@ jsPsych.plugins["invest"] = (function() {
             // This gives time for typing multi-digit inputs
             time_out_identifier = setTimeout( function(){
                 trial_data.balance = trial_data.endowment - sum
-                $('#balance_amount').html("" + trial_data.balance);
+                $('#totals_tot').html("" + sum + "%");
                 current_balance = trial_data.balance;
-
-
-                /*
+                
                 if (sum == trial_data.endowment){
                     $('#proceed').addClass('btn-on');
                 } else {
                     $('#proceed').removeClass('btn-on');
                 }
-                */
+               
             }, 500);
         });
 

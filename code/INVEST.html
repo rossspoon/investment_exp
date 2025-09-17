@@ -66,6 +66,7 @@
 		var exp_type = parseInt(get_or('exp_type', -1));
                 var show_index = get_or('show_index', false) === 'on';
 		var show_survey = get_or('show_survey', false) === 'on';
+		var show_history = get_or('show_history', false) === 'on';
 
 		var treatments = ["variance", "size", "time"];
 		var blocks = jsPsych.randomization.shuffle([0,1]); // block order
@@ -89,18 +90,18 @@
 			var prior_std_I = [5, 30]; // standard deviation of industry factor prior
 			var prior_std_S = [30, 5]; // standard deviation of stock-specific factor priors
 			var n_firms = [4, 4]; // number of firms
-			var time_limit = [12*1000, 12*1000]; //number of (milli)seconds allowed
+			var time_limit = [12, 12]; //number of seconds allowed
 		} else if (exp_type == 1) {
 			var prior_std_I = [30, 30]; // standard deviation of industry factor prior
 			var prior_std_S = [5, 5]; // standard deviation of stock-specific factor priors
 			var n_firms = [1, 7]; // number of firms
 			if (n_firms[0] > n_firms[1]) { var n_firms = n_firms.reverse() }
-			var time_limit = [12*1000, 12*1000]; //number of (milli)seconds allowed
+			var time_limit = [12, 12]; //number of seconds allowed
 		} else if (exp_type == 2) {
 			var prior_std_I = [30, 30]; // standard deviation of industry factor prior
 			var prior_std_S = [5, 5]; // standard deviation of stock-specific factor priors
 			var n_firms = [4, 4]; // number of firms
-			var time_limit = [20*1000, 8*1000]; //number of (milli)seconds allowed
+			var time_limit = [20, 8]; //number of seconds allowed
 
                 } else {
                         var std_I_0 = parseInt(get_or('std_I_0', 5));
@@ -115,9 +116,9 @@
                         var nf_1 = parseInt(get_or('n_firms_1', 4));
 			var n_firms = [nf_0, nf_1]; // number of firms
 
-                        var tl_0 = parseInt(get_or('time_limit_0', 12)) * 1000;
-                        var tl_1 = parseInt(get_or('time_limit_1', 12)) * 1000;
-			var time_limit = [tl_0, tl_1]; //number of (milli)seconds allowed
+                        var tl_0 = parseInt(get_or('time_limit_0', 12))
+                        var tl_1 = parseInt(get_or('time_limit_1', 12))
+			var time_limit = [tl_0, tl_1]; //number of seconds allowed
                 }
                 
                 // adjust the means and stds according to whether to show the index or not
@@ -479,6 +480,7 @@
 					yMin: -100,
 					data: { stage: "forecast_practice" },
                                         show_index: show_index,
+                                        show_history: show_history,
 				};
 
 			if (!quick_mode) {
@@ -510,7 +512,7 @@
 					prior_mean: prior_mean[bl],
 					prior_std: prior_std[bl],
 					next_period_realizations: histories[t],
-					next_button: false,
+					next_button: test_mode,
 					error_std: error_std,
 					error_mean: 0,
 					table_header: true,
@@ -544,6 +546,8 @@
 					yMin: -100,
 					data: { stage: "forecast_real" },
                                         show_index: show_index,
+                                        test_mode: test_mode,
+                                        show_history: show_history,
 				};
 
 				timeline.push(view_trial);
