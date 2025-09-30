@@ -389,7 +389,7 @@ jsPsych.plugins["invest"] = (function() {
                             result = (inv + (ret * inv)/100);
                             trial_data.results[i] = result;
 
-                            $("#return_amt_"+i).html(ret + "&nbsp;%");
+                            $("#return_amt_"+i).html(ret);
 
                             if (isIndexRow){
                                 continue;
@@ -400,13 +400,13 @@ jsPsych.plugins["invest"] = (function() {
 
 
                     //Cash Row
-                    //Just copy the input value to the result cell
-                    cash_ret = Number($("#input_c").val());
+                    //Just copy the trial data balance to the return cell
+                    cash_ret = Number(trial_data.balance);
                     $("#return_amt_c").html(cash_ret.toFixed(2));
                     total_reward += cash_ret;
 
 
-                    $("#totals_res").html(total_reward.toFixed(2) + "&nbsp;%");
+                    $("#totals_res").html(total_reward.toFixed(2));
                     trial_data.total_result= total_reward;
 
                     clearInterval(countDown)
@@ -1241,7 +1241,7 @@ jsPsych.plugins["invest"] = (function() {
             // Give a pause before updating the balance information
             // This gives time for typing multi-digit inputs
             time_out_identifier = setTimeout( function(){
-                trial_data.balance = trial_data.endowment - sum
+                trial_data.balance = trial_data.endowment - sum;
                 total = sum + trial_data.balance;
                 $('#totals_tot').html("" + total + "%");
                 $('#cash_inv').html("" + trial_data.balance+ "%");
