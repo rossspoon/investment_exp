@@ -136,7 +136,14 @@ function make_cash_row() {
     row.append(graph_td);
     
     //investment amt
-    var inv_td = make_investment_td('c', false);
+    //var inv_td = make_investment_td('c', false);
+    //row.append(inv_td);
+    // Cash Investment cell
+    var inv_td = $("<td>", {
+        id: "cash_inv",
+        class: 'td_field',
+        html: "100 %",
+    });
     row.append(inv_td);
     
     var ret_td = $("<td>", {
@@ -1216,7 +1223,6 @@ jsPsych.plugins["invest"] = (function() {
                 }
             });
             
-            
             //Test if the value is less than the available balance
             container_div = $(this).parent('.inv-input-container');
             if (sum > trial_data.endowment) {
@@ -1236,10 +1242,12 @@ jsPsych.plugins["invest"] = (function() {
             // This gives time for typing multi-digit inputs
             time_out_identifier = setTimeout( function(){
                 trial_data.balance = trial_data.endowment - sum
-                $('#totals_tot').html("" + sum + "%");
+                total = sum + trial_data.balance;
+                $('#totals_tot').html("" + total + "%");
+                $('#cash_inv').html("" + trial_data.balance+ "%");
                 current_balance = trial_data.balance;
                 
-                if (sum == trial_data.endowment){
+                if (total == trial_data.endowment){
                     $('#proceed').addClass('btn-on');
                 } else {
                     $('#proceed').removeClass('btn-on');
