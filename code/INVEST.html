@@ -53,7 +53,7 @@
                     if (params.has(pname)){
                         txt = params.get(pname)
                     }
-                    if (param === ''){
+                    if (txt === ''){
                         return def;
                     } else {
                         return txt.split(',').map(Number);
@@ -113,6 +113,14 @@
                         var std_S_1 = arr_get_or('std_S_1', [30,30]);
 			var prior_std_S = [std_S_0, std_S_1]; // standard deviation of stock-specific factor priors
 
+                        var mean_S_0 = arr_get_or('mean_S_0', [0,0]);
+                        var mean_S_1 = arr_get_or('mean_S_1', [0,0]);
+			var prior_mean_S = [mean_S_0, mean_S_1]; // Mean of stock-specific factor priors
+
+                        var std_N_0 = arr_get_or('std_N_0', [30,30]);
+                        var std_N_1 = arr_get_or('std_N_1', [30,30]);
+			var noise_std = [std_N_0, std_N_1]; // standard deviation of signal noise
+
                         var nf_0 = parseInt(get_or('n_firms_0', 4));
                         var nf_1 = parseInt(get_or('n_firms_1', 4));
 			var n_firms = [nf_0, nf_1]; // number of firms
@@ -132,7 +140,8 @@
                 } else {
                     var start_index = 1;
                     var n_rows = n_firms;
-                    var prior_mean = [Array(n_rows[0]).fill(0), Array(n_rows[1]).fill(0)];
+                    //var prior_mean = [Array(n_rows[0]).fill(prior_mean_S[0]), Array(n_rows[1]).fill(prior_mean_S[1])];
+                    var prior_mean = [prior_mean_S[0], prior_mean_S[1]];
                     var prior_std = [std_S_0, std_S_1]
                                     
                 }
@@ -515,6 +524,7 @@
 					total_time: time_limit[bl],
 					prior_mean: prior_mean[bl],
 					prior_std: prior_std[bl],
+                                        noise_std: noise_std[bl],
 					next_period_realizations: histories[t],
 					next_button: test_mode,
 					error_std: error_std,
@@ -538,6 +548,7 @@
 					// total_time: 60*1000,
 					prior_mean: prior_mean[bl],
 					prior_std: prior_std[bl],
+                                        noise_std: noise_std[bl],
 					next_period_realizations: histories[t],
 					slider_min: -120,
 					slider_max: 120,

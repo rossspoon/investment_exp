@@ -73,7 +73,6 @@ function make_investment_td(idx, isempty) {
         type: "text",
     });
     div.append(text_box);
-    div.append("&nbsp; %");
 
     return td;
 }
@@ -142,7 +141,7 @@ function make_cash_row() {
     var inv_td = $("<td>", {
         id: "cash_inv",
         class: 'td_field',
-        html: "100 %",
+        html: "100",
     });
     row.append(inv_td);
     
@@ -389,7 +388,7 @@ jsPsych.plugins["invest"] = (function() {
                             result = (inv + (ret * inv)/100);
                             trial_data.results[i] = result;
 
-                            $("#return_amt_"+i).html(ret);
+                            $("#return_amt_"+i).html(ret + "%");
 
                             if (isIndexRow){
                                 continue;
@@ -704,7 +703,7 @@ jsPsych.plugins["invest"] = (function() {
                         var width = (100 / (nFirms + 1)) * vh - ((headerHeight + footerHeight + 2 * 30) / (nFirms + 1));
                         // var width = 70;
                         var width = 71.5;
-                        var height = 50;
+                        var height = 190;
                         var translate = (width + height)/2;
 
                         var k;
@@ -752,9 +751,10 @@ jsPsych.plugins["invest"] = (function() {
                                         css: {
                                                 "position": "relative",
                                                 "display": "block",
-                                                "width": 70,
+                                                "width": 190,
+                                                "height": width,
                                                 "background-color": "none",
-                                                "margin": 0,
+                                                "margin": "-22px",
                                                 "padding": 0,
                                                 "transform": "rotate(270deg) translateX(-" + translate + "px)",
                                                 "transform-origin": "0 0",
@@ -783,7 +783,8 @@ jsPsych.plugins["invest"] = (function() {
                                                 "background-color": "none",
                                                 "margin": 0,
                                                 "padding": 0,
-                                                "height": 80,
+                                                "height": 180,
+                                                "width": 120,
                                                 "visibility": "visible"
                                         },
                                 })))
@@ -810,6 +811,7 @@ jsPsych.plugins["invest"] = (function() {
                                                 "min-width": 70,
                                                 "max-width": 70,
                                                 "width": 70,
+                                                "height": 180,
                                                 "display": "block",
                                                 "background-color": "none",
                                                 "margin": 0,
@@ -863,6 +865,9 @@ jsPsych.plugins["invest"] = (function() {
                         else if (trial.yMin.length > 0) {
                                 yMin = trial.yMin;
                         }
+
+                    console.log(yMax)
+                    console.log(yMin)
 
                         var density_x = [];
                         var density_y = [];
@@ -1243,8 +1248,8 @@ jsPsych.plugins["invest"] = (function() {
             time_out_identifier = setTimeout( function(){
                 trial_data.balance = trial_data.endowment - sum;
                 total = sum + trial_data.balance;
-                $('#totals_tot').html("" + total + "%");
-                $('#cash_inv').html("" + trial_data.balance+ "%");
+                $('#totals_tot').html("" + total);
+                $('#cash_inv').html("" + trial_data.balance);
                 current_balance = trial_data.balance;
                 
                 if (total == trial_data.endowment){

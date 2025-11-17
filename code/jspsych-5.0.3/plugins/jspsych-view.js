@@ -18,6 +18,7 @@
 			trial_data.names = trial.names;
 			trial_data.prior_mean = trial.prior_mean;
 			trial_data.prior_std = trial.prior_std;
+			trial_data.noise_std = trial.noise_std;
 			trial_data.factor_val = trial.next_period_realizations;
 			trial_data.random_order_stocks = trial.random_order_stocks;
 
@@ -40,6 +41,7 @@
 			var names = trial.names;
 			var prior_mean = trial.prior_mean;
 			var prior_std = trial.prior_std;
+			var noise_std= trial.noise_std;
 			var t = trial.period;
 			var T = trial.n_periods;
 			var instructions = trial.instructions;
@@ -561,7 +563,7 @@
 				// var width = 70;
 				var width = 71.5;
 				// var width = 75;
-				var height = 50;
+				var height = 190;
 				var translate = (width + height)/2;
 
 				// Table
@@ -569,6 +571,7 @@
 
 					$(document.getElementById("table")).append($("<tr>", {
 						"id": "table_" + i,
+                                                "class": "tr_main",
 					})
 
 					// names
@@ -578,7 +581,7 @@
 						"css": {
 							"vertical-align": "middle",
 							"text-align": "left",
-							"font-size": 16,
+							"font-size": 24,
 							"font-family": "Roboto, sans-serif",
 							"font-weight": "300",
 							"color": "rgba(255, 255, 255, .85)",
@@ -615,11 +618,11 @@
 						css: {
 							"position": "relative",
 							"display": "block",
-							"width": 70,
+							"width": 190,
 							"background-color": "none",
-							"margin": 0,
+							"margin": "-22px",
 							"padding": 0,
-							"height": height,
+							"height": width,
 							"transform": "rotate(270deg) translateX(-" + translate + "px)",
 							"transform-origin": "0 0",
 						},
@@ -648,7 +651,7 @@
 							"background-color": "none",
 							"margin": 0,
 							"padding": 0,
-							"height": 80,
+                                                        "height": 180,
 							"visibility": "visible"
 						},
 					})))
@@ -674,8 +677,8 @@
 							"min-width": 70,
 							"max-width": 70,
 							"width": 70,
+                                                        "height": 180,
 							"display": "block",
-							"height": 69,
 							"background-color": "none",
 							"margin": 0,
 							"padding": 0,
@@ -733,7 +736,7 @@
                                     // true_val = histories[t][x];
                                     true_val = trial.next_period_realizations[x];
 
-                                    std = prior_std[x]
+                                    std = noise_std[x]
                                     error = normal(trial.error_mean, std);
                                     while ((error > trial.error_mean + 4.5 * std) || (error < trial.error_mean - 4.5 * std)) {
                                         error = normal(trial.error_mean, std);

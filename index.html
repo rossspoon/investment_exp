@@ -44,18 +44,18 @@ body{
                 <td><input type="text" name="n_periods"/></td>
                 <td> Defaults is 20, or 2 for <em>Quick Mode</em></td>
             </tr>
+                    <!--
             <tr style="border: 2px solid gray;">
                 <td>Experiment Type</td>
                 <td>
-                    <!--
                     <ul>
                         <li>Variance: <input type="radio" name="exp_type" value="0"/></li>
                         <li>Time: <input type="radio" name="exp_type" value="1"/></li>
                         <li>Size: <input type="radio" name="exp_type" value="2"/></li>
                         <li>Custom: <input type="radio" name="exp_type" value="-1" checked/></li>
                     </ul>
-                    -->
             </tr>
+                    -->
         </table>
 
         <table class="custom-tab">
@@ -64,20 +64,27 @@ body{
                 <td>Block 0</td>
                 <td>Block 1</td>
             </tr>
+            <!--
             <tr>
                 <td>Index Std.</td>
                 <td><input type=text value="5" name="std_I_0"/></td>
                 <td><input type=text value="30" name="std_I_1"/></td>
             </tr>
+            -->
             <tr>
                 <td>Stock Std.</td>
-                <td><input type=text value="5,30" name="std_S_0"/></td>
+                <td><input type=text value="30,30" name="std_S_0"/></td>
                 <td><input type=text value="30,30" name="std_S_1"/></td>
             </tr>
             <tr>
                 <td>Stock Means</td>
                 <td><input type=text value="0,0" name="mean_S_0"/></td>
                 <td><input type=text value="0,0" name="mean_S_1"/></td>
+            </tr>
+            <tr>
+                <td>Noise Std.</td>
+                <td><input type=text value="5,30" name="std_N_0"/></td>
+                <td><input type=text value="30,30" name="std_N_1"/></td>
             </tr>
             <tr>
                 <td>N Firms</td>
