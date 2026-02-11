@@ -1,0 +1,11 @@
+
+<p style='text-align:center'>
+<img src='imgs/03_signals.png' style='width:800px'>
+</img>
+</p>
+
+<p> Each period will be divided into three stages.  In the first stage, you will gather information about each stock.  To do this, hover your mouse cursor over the row in the table for that stock.  As you hover over the stock, you will see signals about the possible return of that stock. The pieces of information you receive don't tell you the true return of the stock exactly, but they are useful clues. Their average is equal to the true return.  You may decide to gather a lot of information about some stocks, and a little information (or even none) about others.
+</p>
+
+<p>You will be given a certain amount of time to gather information. The exact amount of time available will be visible in the top right corner of the screen.
+</p>

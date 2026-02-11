@@ -27,7 +27,6 @@
 
 --table-marg-top: 30px;
 --headerHeight: 60px;
---instrHeight: 60px;
 --footerHeight: 60px;
 }
 
@@ -39,7 +38,7 @@
     justify-content: space-around;
     
 
-    width: 85%;
+    width: 75%;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 30px;
@@ -49,8 +48,8 @@
 
 /* INVESTMENT CELL - start */
 .investment-cell {
-    min-width: 200px;
     position: relative;
+    width: 250px;
 }
 
 .inv-input-container {
@@ -58,9 +57,16 @@
     margin: auto;
     position: relative;
 }
+
+input[type="text"] {
+  font-family: 'Open Sans', 'Arial', sans-sefif;
+  font-size: 20pt;
+}
+
 .inv-input {
     outline: none;
     width: 4ch;
+    text-align: right;
 }
 .inv-err {
     border: solid 3px tomato;
@@ -95,35 +101,45 @@
 /* RESULT CELL - start */
 .result-cell {
     position: relative;
-    min-width: 150px;
+    width: 150px;
 }
 /* RESULT CELL - end */
 
 /* RETURN CELL - start */
 .return-cell {
+    width: 150px;
 }
+
 /* RETUNE CELL - end */
+
+.right-al {
+    text-align: right;
+    padding-right: 20px;
+}
 
 #main_table {
     position: relative;
-    min-width: 500px;
-    max-width: 750px;
 
     border-collapse: collapse;
     background-color: white;
 }
 
-.info-table{
-    position: relative;
-    display: inline-block;
-    border-collapse: collapse;
-    background-color: white;
-}
-
-.info-table td{
-    width: 100px;
+.header-row {
+    vertical-align: middle;
     text-align: center;
+    font-size: 16;
+    font-family: Roboto, sans-serif;
+    font-weight: 400;
+    color: rgba(255, 255, 255, .85);
+    background-color: #241846;
+    padding-right: 25;
+    padding-left: 25;
+    text-transform: uppercase;
+    border-bottom: solid 1px rgba(1,1,1,.1);
+    height: 40;
+    border-right: solid 1px rgba(0,0,0,0.1);
 }
+
 
 .table-head {
     vertical-align: middle;
@@ -152,10 +168,23 @@
 .top-spacer {
     height: var(--headerHeight);
 }
-.top-spacer-instr {
-    height: calc(var(--headerHeight) + var(--instrHeight));
-}
 /* TOP SPACER - end  */
+
+
+.td-dense {
+    max-width: 100px;
+}
+.canvas-dense {
+    width: 190px;
+    transform: rotate(270deg) translateY(-40%);
+}
+
+.td-axis{
+    max-width: 50px;
+    min-width: 50px;
+}
+.canvas-axis{
+}
 
 /* SUBMIT BUTTON - start */
 .btn {
@@ -210,11 +239,14 @@
 /* MAIN TABLE HEADER - end */
 
 .tr_main {
-    height: 190px;
+    height: 200px;
     border-bottom: solid 1px rgba(0,0,0,.1);
+    font-size: 20pt;
+
 }
 .tr_bottom{
-    height: 50px;
+    height: 75px;
+    font-size: 20pt;
 }
 
 .tr_main:hover .td_field {
@@ -228,24 +260,23 @@
 .idx_td {
     vertical-align: middle;
     text-align: left;
-    font-size: 16pt;
+    font-size: 18pt;
     font-family: Roboto, sans-serif;
     font-weight: 300;
     color: rgba(255, 255, 255, .85);
-    width: 150px;
     background-color: var(--idx_col_bg);
     padding-right: 25px;
     padding-left: 25px;
+    width: 150px;
 }
 
 .idx_td_bottom {
     vertical-align: middle;
     text-align: left;
-    font-size: 16pt;
+    font-size: 18pt;
     font-family: Roboto, sans-serif;
     font-weight: 300;
     color: rgba(255, 255, 255, .85);
-    width: 150px;
     background-color: var(--idx_bot_col_bg);
     padding-right: 25px;
     padding-left: 25px;

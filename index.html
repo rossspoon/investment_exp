@@ -12,15 +12,163 @@ body{
     border-collapse:collapse;
 }
 
-.custom-tab {
+.bordered {
     border: 2px solid gray;
-    margin-top: 20px;
     margin-bottom: 20px;
+    padding: 20px;
 }
-.custom-tab::before{
-    content: "Custom Exp Parameters"
+
+.quick_config li {
+    list-style-type: none;
+    margin-bottom: 9px;
 }
+
+h3 {
+    margin-bottom: 0px;
+}
+
 </style>
+
+<script>
+    let PERIODS = 20;
+    let PERIODS_Q = 2;
+
+    document.addEventListener("DOMContentLoaded", ready);
+
+    function ready() {
+        // Quick Mode Checkbox
+        let qm = document.getElementById('quick_mode');
+        qm.addEventListener('change', handleQM);
+
+        const configs = {
+            'prior_var': {
+                'b0_pr_std': "10, 30",
+                'b1_pr_std': "7, 13",
+                'b0_pr_mn': "10, 10",
+                'b1_pr_mn': "10, 10",
+                'b0_ns_std': "10, 10",
+                'b1_ns_std': "10, 10",
+                'b0_n': 2,
+                'b1_n': 2,
+                'b0_time': 10,
+                'b1_time': 10,
+                'b0_freq': "500, 500",
+                'b1_freq': "500, 500",
+                'show_hist': true,
+            },
+            'sig_var': {
+                'b0_pr_std': "10, 10",
+                'b1_pr_std': "10, 10",
+                'b0_pr_mn': "10, 10",
+                'b1_pr_mn': "10, 10",
+                'b0_ns_std': "15, 15",
+                'b1_ns_std': "20, 5",
+                'b0_n': 2,
+                'b1_n': 2,
+                'b0_time': 10,
+                'b1_time': 10,
+                'b0_freq': "500, 500",
+                'b1_freq': "500, 500",
+                'show_hist': true,
+            },
+            'cap_time': {
+                'b0_pr_std': "10, 10",
+                'b1_pr_std': "10, 10",
+                'b0_pr_mn': "10, 10",
+                'b1_pr_mn': "10, 10",
+                'b0_ns_std': "10, 10",
+                'b1_ns_std': "10, 10",
+                'b0_n': 2,
+                'b1_n': 2,
+                'b0_time': 12,
+                'b1_time': 5,
+                'b0_freq': "500, 500",
+                'b1_freq': "500, 500",
+                'show_hist': true,
+            },
+            'cap_freq': {
+                'b0_pr_std': "10, 10",
+                'b1_pr_std': "10, 10",
+                'b0_pr_mn': "10, 10",
+                'b1_pr_mn': "10, 10",
+                'b0_ns_std': "10, 10",
+                'b1_ns_std': "10, 10",
+                'b0_n': 2,
+                'b1_n': 2,
+                'b0_time': 10,
+                'b1_time': 10,
+                'b0_freq': "500, 500",
+                'b1_freq': "250, 750",
+                'show_hist': true,
+            },
+            'prior_mean': {
+                'b0_pr_std': "10, 10",
+                'b1_pr_std': "10, 10",
+                'b0_pr_mn': "10, 10",
+                'b1_pr_mn': "5, 30",
+                'b0_ns_std': "10, 10",
+                'b1_ns_std': "10, 10",
+                'b0_n': 2,
+                'b1_n': 2,
+                'b0_time': 10,
+                'b1_time': 10,
+                'b0_freq': "500, 500",
+                'b1_freq': "500, 500",
+                'show_hist': true,
+            },
+        }
+
+        const quick_buttons = document.querySelectorAll('.quick_b');
+        quick_buttons.forEach(b => {
+            let config = configs[b.id]
+
+            b.addEventListener('click', function(event) {
+                set_configs(config);
+            });
+        });
+
+    };
+
+    function set_configs(config){
+        document.getElementById("std_S_0").value = config['b0_pr_std'];
+        document.getElementById("std_S_1").value = config['b1_pr_std'];
+        document.getElementById("mean_S_0").value = config['b0_pr_mn'];
+        document.getElementById("mean_S_1").value = config['b1_pr_mn'];
+        document.getElementById("std_N_0").value = config['b0_ns_std'];
+        document.getElementById("std_N_1").value = config['b1_ns_std'];
+        document.getElementById("n_firms_0").value = config['b0_n'];
+        document.getElementById("n_firms_1").value = config['b1_n'];
+        document.getElementById("time_limit_0").value = config['b0_time'];
+        document.getElementById("time_limit_1").value = config['b1_time'];
+        document.getElementById("npr_freq_0").value = config['b0_freq'];
+        document.getElementById("npr_freq_1").value = config['b1_freq'];
+        if (config['show_hist']) {
+            document.getElementById("show_history").checked = true;
+        } else {
+            document.getElementById("show_history").checked = false;
+        }
+    }
+
+    function handleQM() {
+        let instr = document.getElementById('instr');
+        let practice = document.getElementById('practice');
+        let survey = document.getElementById('survey');
+        let n_periods= document.getElementById('periods');
+
+        if (this.checked) {
+            instr.checked = false;
+            practice.checked = false;
+            survey.checked = false;
+            n_periods.value= PERIODS_Q;
+        } else {
+            instr.checked = true;
+            practice.checked = true;
+            survey.checked = true;
+            n_periods.value= PERIODS;
+        }
+    }
+
+</script>
 
 </head>
 <body>
@@ -29,20 +177,27 @@ body{
         <table class="collapse">
             <tr>
                 <td>Test Mode</td>
-                <td><input type="checkbox" name="test_mode" checked/></td>
+                <td><input type="checkbox" name="test_mode"/></td>
             </tr>
             <tr>
                 <td>Quick Mode</td>
-                <td><input type="checkbox" name="quick_mode" checked/></td>
+                <td><input id="quick_mode" type="checkbox" name="quick_mode"/></td>
+            </tr>
+            <tr>
+                <td>Show Instructions (includes consent and post-practice instructions)</td>
+                <td><input id='instr' type="checkbox" name="show_instructions" checked/></td>
+            </tr>
+            <tr>
+                <td>Show Practice</td>
+                <td><input id='practice' type="checkbox" name="show_practice" checked/></td>
             </tr>
             <tr>
                 <td>Show Survey</td>
-                <td><input type="checkbox" name="show_survey" checked/></td>
+                <td><input id='survey' type="checkbox" name="show_survey" checked/></td>
             </tr>
             <tr>
                 <td>Number Periods (both blocks)</td>
-                <td><input type="text" name="n_periods"/></td>
-                <td> Defaults is 20, or 2 for <em>Quick Mode</em></td>
+                <td><input id='periods' type="text" name="n_periods" value="20"></td>
             </tr>
                     <!--
             <tr style="border: 2px solid gray;">
@@ -57,8 +212,20 @@ body{
             </tr>
                     -->
         </table>
+       
+        <h3>Quick Config</h3>
+        <div class="bordered">
+        <list class=quick_config>
+            <li><input type="button" id="prior_var" value="Prior Var" class="quick_b"/></li>
+            <li><input type="button" id="sig_var" value="Signal Var" class="quick_b"/></li>
+            <li><input type="button" id="cap_time" value="Capacity Time" class="quick_b"/></li>
+            <li><input type="button" id="cap_freq" value="Capacity Freq" class="quick_b"/></li>
+            <li><input type="button" id="prior_mean" value="Prior Mean" class="quick_b"/></li>
+        </list>
+        </div>
 
-        <table class="custom-tab">
+        <h3>Session Configuration</h3>
+        <table class="bordered">
             <tr>
                 <td>&nbsp;</td>
                 <td>Block 0</td>
@@ -73,37 +240,37 @@ body{
             -->
             <tr>
                 <td>Stock Std.</td>
-                <td><input type=text value="30,30" name="std_S_0"/></td>
-                <td><input type=text value="30,30" name="std_S_1"/></td>
+                <td><input type=text value="30,30" name="std_S_0" id="std_S_0"/></td>
+                <td><input type=text value="30,30" name="std_S_1" id="std_S_1"/></td>
             </tr>
             <tr>
                 <td>Stock Means</td>
-                <td><input type=text value="0,0" name="mean_S_0"/></td>
-                <td><input type=text value="0,0" name="mean_S_1"/></td>
+                <td><input type=text value="0,0" name="mean_S_0" id="mean_S_0"/></td>
+                <td><input type=text value="0,0" name="mean_S_1" id="mean_S_1"/></td>
             </tr>
             <tr>
                 <td>Noise Std.</td>
-                <td><input type=text value="5,30" name="std_N_0"/></td>
-                <td><input type=text value="30,30" name="std_N_1"/></td>
+                <td><input type=text value="5,30" name="std_N_0" id="std_N_0"/></td>
+                <td><input type=text value="30,30" name="std_N_1" id="std_N_1"/></td>
             </tr>
             <tr>
                 <td>N Firms</td>
-                <td><input type=text value="2" name="n_firms_0"/></td>
-                <td><input type=text value="2" name="n_firms_1"/></td>
+                <td><input type=text value="2" name="n_firms_0" id="n_firms_0"/></td>
+                <td><input type=text value="2" name="n_firms_1" id="n_firms_1"/></td>
             </tr>
             <tr>
                 <td>Time Limit</td>
-                <td><input type=text value="12" name="time_limit_0"/></td>
-                <td><input type=text value="12" name="time_limit_1"/></td>
+                <td><input type=text value="12" name="time_limit_0" id="time_limit_0"/></td>
+                <td><input type=text value="12" name="time_limit_1" id="time_limit_1"/></td>
             </tr>
             <tr>
                 <td>NPR Freq</td>
-                <td><input type=text value="250,1000" name="npr_freq_0"/></td>
-                <td><input type=text value="500,500" name="npr_freq_1"/></td>
+                <td><input type=text value="250,1000" name="npr_freq_0" id="npr_freq_0"/></td>
+                <td><input type=text value="500,500" name="npr_freq_1" id="npr_freq_1"/></td>
             </tr>
             <tr>
                 <td>Show History</td>
-                <td colspan="2"><input type="checkbox" name="show_history" checked/></td>
+                <td colspan="2"><input type="checkbox" name="show_history" id="show_history" checked/></td>
             </tr>
         </table>
 

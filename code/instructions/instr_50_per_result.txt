@@ -1,0 +1,12 @@
+
+<p style='text-align:center'>
+<img src='imgs/05_result.png' style='width:800px'>
+</img>
+</p>
+
+<p>  </p>
+<p> Next is the results stage of the period.  Here, you will see the actual return of the stock and how much your investments are now worth.  The stocks may have a positive return, in which case, your invested amount will grow.  Or, stocks can have a negative return, in which case, your invested amount in that stock will decrease.   Any amount held in cash remains the same, as there is no interest payment on cash.  You will also see your total portfolio value.  Your bonus payment will be based on this result. </p>
+<p>  </p>
+<p> You have unlimited time to examine these results.  When you are finished, click on the “NEXT” button to start the next period. </p>
+<p>  </p>
+

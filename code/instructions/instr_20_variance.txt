@@ -1,0 +1,7 @@
+
+<p style='text-align:center'>
+<img src='imgs/02_varying.png' style='width:800px'>
+</img>
+</p>
+
+<p>Across periods, the return of each stock might vary a lot or a little. This is indicated by the sideways bell curves, which can be wider (if the true return values vary a lot, or they are more uncertain) or narrower (if the true return values vary a little, or they are more certain).</p>

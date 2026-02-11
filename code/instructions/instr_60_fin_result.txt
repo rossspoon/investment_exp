@@ -1,0 +1,18 @@
+<p> After the last period, we will calculate your bonus payment.  
+To determine your bonus payment, we will first select one of the periods that
+ you played at random.  
+Next, we will take the total amount earned in that period and divide it by 20.  
+This will be your bonus in USD.
+  Because, your bonus is based on a randomly selected period, it is in your i
+best interest to make the best possible investment choices in each period.
+ </p>
+<p>  </p>
+<p> For example, if the randomly selected period was as shown.  Your bonus payment will be 96.12 ÷ 20 = $4.81. </p>
+<p>  </p>
+
+<p style='text-align:center'>
+<img src='imgs/05_result.png' style='width:800px'>
+</img>
+</p>
+
+

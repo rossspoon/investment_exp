@@ -1,0 +1,9 @@
+
+<p> This game has 20 periods.   What happens in one period has no effect on what happens in any other period. </p>
+<p> In each period, you will be shown information about how two stocks might perform.  The information you receive can be thought of as signals about past performance of the stock.  Your task is to gather information about the possible returns of each stock and decide how you would like to invest in them (You will be instructed on how to gather this information later).   You will be given 100 units of cash that you can use to invest in those stocks.  You may invest any amount you wish in either stock, or you may decide not to invest. </p>
+<p>  </p>
+
+<p style='text-align:center'>
+<img src='imgs/01_interface.png' style='width:800px'>
+</img>
+</p>

@@ -1,0 +1,8 @@
+<p>  </p>
+<p> <p style='text-align:center'>Welcome to the Stock Investment Game! </p>
+<p>  </p>
+<p> In this game, you will be asked to invest in stocks based on a stream of incoming information. The better your investment strategy, the more money you will earn! </p>
+<p> Please close as many other tabs and windows as possible and make your browser window full screen (in some browsers this is done by hitting F11). Read the following instructions carefully! It will help you earn more money. </p>
+<p> People who pay attention to this task earn more money than people who don't. </p>
+<p> Please stay engaged during this task. If you need to take breaks, there are opportunities to do so between each period. We expect your participation in this experiment to last about 30  minutes, and that you will earn your participantion payment of $XX in addition to a bonus payment of about $5.00 USD.  Your bonus payment might be more or less depending on the decisions you make during the experiment.</p>
+<p>  </p>

@@ -1,0 +1,24 @@
+
+<p style='text-align:center'>
+<img src='imgs/04_investment.png' style='width:800px'>
+</img>
+</p>
+
+<p>
+In the investment stage, you will decide how much you wish to invest in each stock 
+out of your 100 units of cash.  
+Enter your investment amounts in the boxes provided.  
+As you enter your investment amounts, the available cash will decrease by that
+ amount.  
+You may invest any amount you wish up to your cash amount.
+  You may not invest more than 100 units of cash.   i
+You are not required to invest all of your cash.
+  You may invest nothing if you wish.  
+</p>
+
+<p>  </p>
+<p>
+You have as much time as you need to make your investments. 
+Feel free to adjust them until you are satisfied. When you are satisfied with your 
+investments, click on the “SUBMIT” button at the bottom of the screen.
+</p>

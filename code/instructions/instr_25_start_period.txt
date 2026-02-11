@@ -1,0 +1,13 @@
+<p> At the begining of each period will be an initiation page.  There is no time limit
+on this page.  You will see a timer in the upper right-hand corner.  
+The timer is not active
+at this stage, but it will inform you of the amount of time you will be given to gather
+information about the stocks.  When you are ready, click on 
+the timer and the perod will start..
+</p>
+
+
+<p style='text-align:center'>
+<img src='imgs/00_start_period.png' style='width:800px'>
+</img>
+</p>
