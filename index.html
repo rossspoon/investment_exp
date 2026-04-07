@@ -27,6 +27,16 @@ h3 {
     margin-bottom: 0px;
 }
 
+ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* shorthand for row-gap and column-gap */
+  padding: 0; /* remove default padding/margin */
+  margin: 0;
+  list-style-type: none;
+}
+
+
 </style>
 
 <script>
@@ -34,89 +44,158 @@ h3 {
     let PERIODS_Q = 2;
 
     document.addEventListener("DOMContentLoaded", ready);
+    const configs = {
+        'prior_var': {
+            'name': 'Prior Var.',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 10",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "25, 22",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 30",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+        },
+        'sig_var_1': {
+            'name': 'Sig Var. 1',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "25, 22",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 20",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+        },
+        'sig_var_2': {
+            'name': 'Sig Var. 2',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "25, 22",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 15",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+        },
+        'cap_time': {
+            'name': 'Capacity Time',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "25, 22",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 30",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 12,
+            'b1_time': 5,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+        },
+        'cap_freq': {
+            'name': 'Capacity Freq',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "25, 22",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 30",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "250, 750",
+            'show_hist': true,
+        },
+        'prior_mean_1': {
+            'name': 'Prior Mean 1',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "30, 20",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 30",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+        },
+        'prior_mean_2': {
+            'name': 'Prior Mean 2',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "35, 15",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 30",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+        },
+        'sig_hi_var': {
+            'name': 'Signal Hi Var.',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "25, 22",
+            'b0_ns_std': "50, 50",
+            'b1_ns_std': "50, 50",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+        },
+    }
 
     function ready() {
         // Quick Mode Checkbox
         let qm = document.getElementById('quick_mode');
         qm.addEventListener('change', handleQM);
 
-        const configs = {
-            'prior_var': {
-                'b0_pr_std': "10, 30",
-                'b1_pr_std': "7, 13",
-                'b0_pr_mn': "10, 10",
-                'b1_pr_mn': "10, 10",
-                'b0_ns_std': "10, 10",
-                'b1_ns_std': "10, 10",
-                'b0_n': 2,
-                'b1_n': 2,
-                'b0_time': 10,
-                'b1_time': 10,
-                'b0_freq': "500, 500",
-                'b1_freq': "500, 500",
-                'show_hist': true,
-            },
-            'sig_var': {
-                'b0_pr_std': "10, 10",
-                'b1_pr_std': "10, 10",
-                'b0_pr_mn': "10, 10",
-                'b1_pr_mn': "10, 10",
-                'b0_ns_std': "15, 15",
-                'b1_ns_std': "20, 5",
-                'b0_n': 2,
-                'b1_n': 2,
-                'b0_time': 10,
-                'b1_time': 10,
-                'b0_freq': "500, 500",
-                'b1_freq': "500, 500",
-                'show_hist': true,
-            },
-            'cap_time': {
-                'b0_pr_std': "10, 10",
-                'b1_pr_std': "10, 10",
-                'b0_pr_mn': "10, 10",
-                'b1_pr_mn': "10, 10",
-                'b0_ns_std': "10, 10",
-                'b1_ns_std': "10, 10",
-                'b0_n': 2,
-                'b1_n': 2,
-                'b0_time': 12,
-                'b1_time': 5,
-                'b0_freq': "500, 500",
-                'b1_freq': "500, 500",
-                'show_hist': true,
-            },
-            'cap_freq': {
-                'b0_pr_std': "10, 10",
-                'b1_pr_std': "10, 10",
-                'b0_pr_mn': "10, 10",
-                'b1_pr_mn': "10, 10",
-                'b0_ns_std': "10, 10",
-                'b1_ns_std': "10, 10",
-                'b0_n': 2,
-                'b1_n': 2,
-                'b0_time': 10,
-                'b1_time': 10,
-                'b0_freq': "500, 500",
-                'b1_freq': "250, 750",
-                'show_hist': true,
-            },
-            'prior_mean': {
-                'b0_pr_std': "10, 10",
-                'b1_pr_std': "10, 10",
-                'b0_pr_mn': "10, 10",
-                'b1_pr_mn': "5, 30",
-                'b0_ns_std': "10, 10",
-                'b1_ns_std': "10, 10",
-                'b0_n': 2,
-                'b1_n': 2,
-                'b0_time': 10,
-                'b1_time': 10,
-                'b0_freq': "500, 500",
-                'b1_freq': "500, 500",
-                'show_hist': true,
-            },
-        }
+        //Add Quick-Config Buttons
+        qc_list = document.getElementById('quick_config_list');
+        Object.entries(configs).forEach(([key, config])  => {
+        
+            btn = document.createElement("input");
+            btn.type="button";
+            btn.id = key;
+            btn.value = config['name'];
+            btn.classList.add("quick_b");
+
+            li = document.createElement("li");
+            li.appendChild(btn);
+
+            qc_list.appendChild(li);
+        });
+
 
         const quick_buttons = document.querySelectorAll('.quick_b');
         quick_buttons.forEach(b => {
@@ -168,6 +247,8 @@ h3 {
         }
     }
 
+
+
 </script>
 
 </head>
@@ -215,13 +296,8 @@ h3 {
        
         <h3>Quick Config</h3>
         <div class="bordered">
-        <list class=quick_config>
-            <li><input type="button" id="prior_var" value="Prior Var" class="quick_b"/></li>
-            <li><input type="button" id="sig_var" value="Signal Var" class="quick_b"/></li>
-            <li><input type="button" id="cap_time" value="Capacity Time" class="quick_b"/></li>
-            <li><input type="button" id="cap_freq" value="Capacity Freq" class="quick_b"/></li>
-            <li><input type="button" id="prior_mean" value="Prior Mean" class="quick_b"/></li>
-        </list>
+        <ul id="quick_config_list" class=quick_config>
+        </ul>
         </div>
 
         <h3>Session Configuration</h3>
