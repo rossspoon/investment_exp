@@ -93,7 +93,7 @@
 
                 // Parameters
 		var test_mode = get_or('test_mode', false) === 'on';
-		var exp_type = parseInt(get_or('exp_type', -1));
+		var exp_type = parseInt(get_or('exp_type', 'NO_CONFIG_'));
                 var show_index = get_or('show_index', false) === 'on';
 
 		var show_instructions = get_or('show_instructions', false) === 'on';
@@ -121,49 +121,30 @@
 
 		//---------Set task parameters---------
 
-		// Firm parameters in block 0 vs 1
-		if (exp_type == 0) {
-			var prior_std_I = [5, 30]; // standard deviation of industry factor prior
-			var prior_std_S = [30, 5]; // standard deviation of stock-specific factor priors
-			var n_firms = [4, 4]; // number of firms
-			var time_limit = [12, 12]; //number of seconds allowed
-		} else if (exp_type == 1) {
-			var prior_std_I = [30, 30]; // standard deviation of industry factor prior
-			var prior_std_S = [5, 5]; // standard deviation of stock-specific factor priors
-			var n_firms = [1, 7]; // number of firms
-			if (n_firms[0] > n_firms[1]) { var n_firms = n_firms.reverse() }
-			var time_limit = [12, 12]; //number of seconds allowed
-		} else if (exp_type == 2) {
-			var prior_std_I = [30, 30]; // standard deviation of industry factor prior
-			var prior_std_S = [5, 5]; // standard deviation of stock-specific factor priors
-			var n_firms = [4, 4]; // number of firms
-			var time_limit = [20, 8]; //number of seconds allowed
+                var std_I_0 = parseInt(get_or('std_I_0', 5));
+                var std_I_1 = parseInt(get_or('std_I_1', 30));
+                var prior_std_I = [std_I_0, std_I_1]; // standard deviation of industry factor prior
 
-                } else {
-                        var std_I_0 = parseInt(get_or('std_I_0', 5));
-                        var std_I_1 = parseInt(get_or('std_I_1', 30));
-			var prior_std_I = [std_I_0, std_I_1]; // standard deviation of industry factor prior
+                var std_S_0 = arr_get_or('std_S_0', [30,30]);
+                var std_S_1 = arr_get_or('std_S_1', [30,30]);
+                var prior_std_S = [std_S_0, std_S_1]; // standard deviation of stock-specific factor priors
 
-                        var std_S_0 = arr_get_or('std_S_0', [30,30]);
-                        var std_S_1 = arr_get_or('std_S_1', [30,30]);
-			var prior_std_S = [std_S_0, std_S_1]; // standard deviation of stock-specific factor priors
+                var mean_S_0 = arr_get_or('mean_S_0', [0,0]);
+                var mean_S_1 = arr_get_or('mean_S_1', [0,0]);
+                var prior_mean_S = [mean_S_0, mean_S_1]; // Mean of stock-specific factor priors
 
-                        var mean_S_0 = arr_get_or('mean_S_0', [0,0]);
-                        var mean_S_1 = arr_get_or('mean_S_1', [0,0]);
-			var prior_mean_S = [mean_S_0, mean_S_1]; // Mean of stock-specific factor priors
+                var std_N_0 = arr_get_or('std_N_0', [30,30]);
+                var std_N_1 = arr_get_or('std_N_1', [30,30]);
+                var noise_std = [std_N_0, std_N_1]; // standard deviation of signal noise
 
-                        var std_N_0 = arr_get_or('std_N_0', [30,30]);
-                        var std_N_1 = arr_get_or('std_N_1', [30,30]);
-			var noise_std = [std_N_0, std_N_1]; // standard deviation of signal noise
+                var nf_0 = parseInt(get_or('n_firms_0', 4));
+                var nf_1 = parseInt(get_or('n_firms_1', 4));
+                var n_firms = [nf_0, nf_1]; // number of firms
 
-                        var nf_0 = parseInt(get_or('n_firms_0', 4));
-                        var nf_1 = parseInt(get_or('n_firms_1', 4));
-			var n_firms = [nf_0, nf_1]; // number of firms
+                var tl_0 = parseInt(get_or('time_limit_0', 12))
+                var tl_1 = parseInt(get_or('time_limit_1', 12))
+                var time_limit = [tl_0, tl_1]; //number of seconds allowed
 
-                        var tl_0 = parseInt(get_or('time_limit_0', 12))
-                        var tl_1 = parseInt(get_or('time_limit_1', 12))
-			var time_limit = [tl_0, tl_1]; //number of seconds allowed
-                }
                 
                 // adjust the means and stds according to whether to show the index or not
                 if (show_index) {
@@ -236,21 +217,9 @@
 		for (var j = 0; j < n_rows[1]; j++) random_order_stocks_1.push(j);
 		//var random_order_stocks = jsPsych.randomization.shuffle(random_order_stocks); //shuffle order completely
 		var practice_random_order_stocks = randomize(random_order_stocks_practice);
-		if (exp_type == 1) {
-			//randomize separately across blocks
-			//var rand_order_0 = randomize(random_order_stocks_0);
-			//var rand_order_1 = randomize(random_order_stocks_1);
-			//var random_order_stocks = [ rand_order_0, rand_order_1 ];
-			//randomize keeping order same
-			var rand_order = randomize(random_order_stocks_0);
-			for (var j = 0; j < n_rows[1]; j++) random_order_stocks_1.push(j);
-			for (var j = 0; j < n_rows[0]; j++) { random_order_stocks_1[j] = rand_order[j]; }
-			var random_order_stocks = [ rand_order, random_order_stocks_1 ];
-		} else {
-			var rand_order_0 = randomize(random_order_stocks_0);
-			var rand_order_1 = randomize(random_order_stocks_1);
-			var random_order_stocks = [ rand_order_0, rand_order_1 ];
-		}
+                var rand_order_0 = randomize(random_order_stocks_0);
+                var rand_order_1 = randomize(random_order_stocks_1);
+                var random_order_stocks = [ rand_order_0, rand_order_1 ];
 
 		// generate a random subject ID with 8 characters
 		var subject_id = "" + exp_type + Math.floor(Math.random()*10000000);
