@@ -3,6 +3,8 @@
     <title>Test Bed for Investment Experiment</title>
 
 <style>
+#config-status { color: green; margin-top: 5px; font-style: italic; }
+
 body{
     padding-left: 30px;
     padding-top: 30px;
@@ -258,6 +260,102 @@ ul {
 
 
 
+    function getStatus() { return document.getElementById('config-status'); }
+
+    async function saveConfig() {
+        const name = document.getElementById('config_name').value.trim();
+        if (!name) { alert('Please enter a config name.'); return; }
+
+        const form = document.querySelector('form');
+        const data = new FormData(form);
+        data.set('config_name', name);
+        if (!document.getElementById('show_history').checked) data.delete('show_history');
+        if (!document.getElementById('test_mode').checked)  data.delete('test_mode');
+        if (!document.getElementById('quick_mode').checked) data.delete('quick_mode');
+        if (!document.getElementById('instr').checked)      data.delete('show_instructions');
+        if (!document.getElementById('practice').checked)   data.delete('show_practice');
+        if (!document.getElementById('survey').checked)     data.delete('show_survey');
+        if (!document.getElementById('is_default').checked) data.delete('is_default');
+
+        const resp = await fetch('save_config.php', { method: 'POST', body: data });
+        const json = await resp.json();
+
+        getStatus().textContent = json.success
+            ? `Saved "${name}" successfully.`
+            : `Error saving config.`;
+
+        // Clear name and default checkbox after saving
+        document.getElementById('config_name').value = '';
+        document.getElementById('is_default').checked = false;
+
+        refreshConfigList();
+    }
+
+    async function loadConfig() {
+        const name = document.getElementById('saved_configs').value;
+        if (!name) { alert('Please select a config from the list.'); return; }
+
+        const resp = await fetch(`load_config.php?config_name=${encodeURIComponent(name)}`);
+        if (!resp.ok) { getStatus().textContent = `Config "${name}" not found.`; return; }
+
+        applyConfig(await resp.json());
+    }
+
+    async function loadDefault() {
+        const resp = await fetch('load_config.php?load_default=1');
+        if (!resp.ok) { return; } // No default set, just leave form as-is
+        const cfg = await resp.json();
+        if (!cfg.error) applyConfig(cfg);
+    }
+
+    function applyConfig(cfg) {
+        // Top section
+        document.getElementById('test_mode').checked        = cfg.test_mode === 't' || cfg.test_mode === true;
+        document.getElementById('quick_mode').checked       = cfg.quick_mode === 't' || cfg.quick_mode === true;
+        document.getElementById('instr').checked            = cfg.show_instructions === 't' || cfg.show_instructions === true;
+        document.getElementById('practice').checked         = cfg.show_practice === 't' || cfg.show_practice === true;
+        document.getElementById('survey').checked           = cfg.show_survey === 't' || cfg.show_survey === true;
+        document.getElementById('periods').value            = cfg.n_periods;
+
+        // Session configuration section
+        document.getElementById('std_S_0').value      = cfg.std_s_0;
+        document.getElementById('std_S_1').value      = cfg.std_s_1;
+        document.getElementById('mean_S_0').value     = cfg.mean_s_0;
+        document.getElementById('mean_S_1').value     = cfg.mean_s_1;
+        document.getElementById('std_N_0').value      = cfg.std_n_0;
+        document.getElementById('std_N_1').value      = cfg.std_n_1;
+        document.getElementById('n_firms_0').value    = cfg.n_firms_0;
+        document.getElementById('n_firms_1').value    = cfg.n_firms_1;
+        document.getElementById('time_limit_0').value = cfg.time_limit_0;
+        document.getElementById('time_limit_1').value = cfg.time_limit_1;
+        document.getElementById('npr_freq_0').value   = cfg.npr_freq_0;
+        document.getElementById('npr_freq_1').value   = cfg.npr_freq_1;
+        document.getElementById('show_history').checked = cfg.show_history === 't' || cfg.show_history === true;
+        document.getElementById('exp_type').value     = cfg.exp_type;
+
+        // Save/load section
+        document.getElementById('config_name').value  = cfg.config_name;
+        document.getElementById('is_default').checked = cfg.is_default === 't' || cfg.is_default === true;
+        getStatus().textContent = `Loaded "${cfg.config_name}"` + (cfg.is_default === 't' ? ' (default)' : '');
+    }
+    async function refreshConfigList() {
+        const resp = await fetch('load_config.php');
+        const list = await resp.json();
+        const sel = document.getElementById('saved_configs');
+        sel.innerHTML = '<option value="">-- saved configs --</option>';
+        list.forEach(row => {
+            const opt = document.createElement('option');
+            opt.value = row.config_name;
+            opt.textContent = row.config_name + (row.is_default === 't' ? ' ★' : '');
+            sel.appendChild(opt);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        ready();
+        refreshConfigList();
+        loadDefault(); // Auto-load default config on page load
+    });
 </script>
 
 </head>
@@ -266,7 +364,7 @@ ul {
         <table class="collapse">
             <tr>
                 <td>Test Mode</td>
-                <td><input type="checkbox" name="test_mode"/></td>
+                <td><input id="test_mode" type="checkbox" name="test_mode"/></td>
             </tr>
             <tr>
                 <td>Quick Mode</td>
@@ -351,6 +449,33 @@ ul {
             </tr>
         </table>
 
+<h3>Save / Load Configuration</h3>
+<div class="bordered">
+    <table>
+        <tr>
+            <td>Config Name</td>
+            <td><input type="text" id="config_name" placeholder="e.g. my_experiment"/></td>
+        </tr>
+        <tr>
+            <td>Set as Default</td>
+            <td><input type="checkbox" id="is_default" name="is_default"/></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="button" value="Save Config" onclick="saveConfig()"/>
+                &nbsp;
+                <input type="button" value="Load Config" onclick="loadConfig()"/>
+                &nbsp;
+                <select id="saved_configs">
+                    <option value="">-- saved configs --</option>
+                </select>
+                <input type="button" value="Refresh List" onclick="refreshConfigList()"/>
+            </td>
+        </tr>
+    </table>
+    <div id="config-status"></div>
+</div>
 
         <input type="submit"/>
     </form>

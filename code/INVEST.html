@@ -91,77 +91,103 @@
                     ];
 
 
-                // Parameters
-		var test_mode = get_or('test_mode', false) === 'on';
-		var exp_type = get_or('exp_type', 'NO_CONFIG_');
-                var show_index = get_or('show_index', false) === 'on';
+                // Helper to parse boolean from postgres ('t'/'f') or URL param ('on'/false)
+                function parseBool(val, def) {
+                    if (val === 't' || val === true  || val === 'on')  return true;
+                    if (val === 'f' || val === false || val === '')    return false;
+                    return def;
+                }
 
-		var show_instructions = get_or('show_instructions', false) === 'on';
-		var show_practice = get_or('show_practice', false) === 'on';
-		var show_survey = get_or('show_survey', false) === 'on';
+                // Helper to parse comma-separated string into array of numbers
+                function parseArr(val, def) {
+                    if (!val) return def;
+                    return val.toString().split(',').map(Number);
+                }
 
-		var show_history = get_or('show_history', false) === 'on';
+                // Load default config from DB, fall back to URL params, then hardcoded defaults
+                async function loadConfig() {
+                    try {
+                        const resp = await fetch('../load_config.php?load_default=1');
+                        if (!resp.ok) throw new Error('No default config');
+                        const cfg = await resp.json();
+                        if (cfg.error) throw new Error(cfg.error);
+                        return cfg;
+                    } catch(e) {
+                        console.warn('Could not load default config:', e.message);
+                        return null;
+                    }
+                }
 
-		var treatments = ["variance", "size", "time"];
-		var blocks = jsPsych.randomization.shuffle([0,1]); // block order
+                // Parameters — will be set after config load
+                var test_mode, exp_type, show_index, show_instructions, show_practice,
+                    show_survey, show_history, npr_frequency, error_std,
+                    prior_std_I, prior_std_S, prior_mean_S, noise_std, n_firms, time_limit;
+
+                var treatments = ["variance", "size", "time"];
+                var blocks = jsPsych.randomization.shuffle([0,1]); // block order
 
                 var NAMES = ["Index", "Stock A", "Stock B", "Stock C", "Stock D", "Stock E", "Stock F", "Stock G", "Stock H"]
                 var HIST_BOUND = 35;
+                error_std = 10; //standard deviation of npr errors
 
-		// Timing/NPR parameters
-                var npr_freq_0 = arr_get_or('npr_freq_0', [500, 500]);
-                var npr_freq_1 = arr_get_or('npr_freq_1', [500, 500]);
-		var npr_frequency = [npr_freq_0, npr_freq_1];
-		var error_std = 10; //standard deviation of npr errors
+                async function initParams() {
+                    const cfg = await loadConfig();
 
+                    if (!cfg) {
+                        // No default config — show error and stop
+                        document.body.innerHTML = `
+                            <div style="font-family:sans-serif; padding:60px; text-align:center;">
+                                <h2>Configuration Error</h2>
+                                <p>No default configuration has been set.</p>
+                                <p>Please go to the <a href="../index.php">admin page</a> and save a configuration marked as default.</p>
+                            </div>`;
+                        throw new Error('No default config set — experiment halted.');
+                    }
 
+                    // Use DB config values, with URL params as override, then hardcoded fallback
+                    test_mode        = parseBool(get_or('test_mode', cfg.test_mode), false);
+                    exp_type         = get_or('exp_type', cfg.exp_type || 'NO_CONFIG');
+                    show_index       = parseBool(get_or('show_index', false), false);
+                    show_instructions = parseBool(get_or('show_instructions', cfg.show_instructions), false);
+                    show_practice    = parseBool(get_or('show_practice',    cfg.show_practice),    false);
+                    show_survey      = parseBool(get_or('show_survey',      cfg.show_survey),      false);
+                    show_history     = parseBool(get_or('show_history',     cfg.show_history),     false);
 
-		// pick a random condition for the subject at the start of the experiment
-		// var condition_assignment = jsPsych.randomization.shuffle(['conditionA', 'conditionB', 'conditionC'], 1)[0];
+                    var npr_freq_0   = parseArr(get_or('npr_freq_0', cfg.npr_freq_0), [500, 500]);
+                    var npr_freq_1   = parseArr(get_or('npr_freq_1', cfg.npr_freq_1), [500, 500]);
+                    npr_frequency    = [npr_freq_0, npr_freq_1];
 
-		//---------Set task parameters---------
+                    //---------Set task parameters---------
+                    var std_I_0  = parseInt(get_or('std_I_0', 5));
+                    var std_I_1  = parseInt(get_or('std_I_1', 30));
+                    prior_std_I  = [std_I_0, std_I_1];
 
-                var std_I_0 = parseInt(get_or('std_I_0', 5));
-                var std_I_1 = parseInt(get_or('std_I_1', 30));
-                var prior_std_I = [std_I_0, std_I_1]; // standard deviation of industry factor prior
+                    var std_S_0  = parseArr(get_or('std_S_0', cfg.std_s_0), [30,30]);
+                    var std_S_1  = parseArr(get_or('std_S_1', cfg.std_s_1), [30,30]);
+                    prior_std_S  = [std_S_0, std_S_1];
 
-                var std_S_0 = arr_get_or('std_S_0', [30,30]);
-                var std_S_1 = arr_get_or('std_S_1', [30,30]);
-                var prior_std_S = [std_S_0, std_S_1]; // standard deviation of stock-specific factor priors
+                    var mean_S_0 = parseArr(get_or('mean_S_0', cfg.mean_s_0), [0,0]);
+                    var mean_S_1 = parseArr(get_or('mean_S_1', cfg.mean_s_1), [0,0]);
+                    prior_mean_S = [mean_S_0, mean_S_1];
 
-                var mean_S_0 = arr_get_or('mean_S_0', [0,0]);
-                var mean_S_1 = arr_get_or('mean_S_1', [0,0]);
-                var prior_mean_S = [mean_S_0, mean_S_1]; // Mean of stock-specific factor priors
+                    var std_N_0  = parseArr(get_or('std_N_0', cfg.std_n_0), [30,30]);
+                    var std_N_1  = parseArr(get_or('std_N_1', cfg.std_n_1), [30,30]);
+                    noise_std    = [std_N_0, std_N_1];
 
-                var std_N_0 = arr_get_or('std_N_0', [30,30]);
-                var std_N_1 = arr_get_or('std_N_1', [30,30]);
-                var noise_std = [std_N_0, std_N_1]; // standard deviation of signal noise
+                    var nf_0     = parseInt(get_or('n_firms_0', cfg.n_firms_0 || 4));
+                    var nf_1     = parseInt(get_or('n_firms_1', cfg.n_firms_1 || 4));
+                    n_firms      = [nf_0, nf_1];
 
-                var nf_0 = parseInt(get_or('n_firms_0', 4));
-                var nf_1 = parseInt(get_or('n_firms_1', 4));
-                var n_firms = [nf_0, nf_1]; // number of firms
+                    var tl_0     = parseInt(get_or('time_limit_0', cfg.time_limit_0 || 12));
+                    var tl_1     = parseInt(get_or('time_limit_1', cfg.time_limit_1 || 12));
+                    time_limit   = [tl_0, tl_1];
 
-                var tl_0 = parseInt(get_or('time_limit_0', 12))
-                var tl_1 = parseInt(get_or('time_limit_1', 12))
-                var time_limit = [tl_0, tl_1]; //number of seconds allowed
+                    return cfg;
+                }
 
                 
-                // adjust the means and stds according to whether to show the index or not
-                if (show_index) {
-                    var start_index = 0;
-                    var n_rows = [n_firms[0]+1, n_firms[1]+1];
-                    var prior_mean = [Array(n_rows[0]).fill(0), Array(n_rows[1]).fill(0)];
-                    var prior_std = [Array(n_rows[0]+1).fill(prior_std_I[0]).fill(prior_std_S[0],1),
-                                    Array(n_rows[1]+1).fill(prior_std_I[1]).fill(prior_std_S[1],1)];
-                } else {
-                    var start_index = 1;
-                    var n_rows = n_firms;
-                    var prior_mean = [prior_mean_S[0], prior_mean_S[1]];
-                    var prior_std = [std_S_0, std_S_1]
-                                    
-                }
-                var names = [NAMES.slice(start_index, n_firms[0]+1),
-                            NAMES.slice(start_index, n_firms[1]+1)];
+                // These will be set inside initExperiment() after config is loaded
+                var start_index, n_rows, prior_mean, prior_std, names;
 
 		// Practice parameters
 		var practice_n_firms = 2;
@@ -178,14 +204,36 @@
 
 		// History parameters
 		var practice_n_periods = 2; // number of practice periods
-                var n_periods = parseInt(get_or('n_periods', 20)); //default is based on quick mode else allow for override
-		
+                var n_periods; // set in initExperiment
+
+                // All config-dependent setup + experiment launch
+                async function initExperiment() {
+                    const cfg = await initParams(); // fetch default config from DB (shows error and halts if missing)
+
+                    // URL param can still override n_periods
+                    n_periods = parseInt(get_or('n_periods', cfg.n_periods));
+
+                    // adjust means/stds based on whether to show the index
+                    if (show_index) {
+                        start_index = 0;
+                        n_rows = [n_firms[0]+1, n_firms[1]+1];
+                        prior_mean = [Array(n_rows[0]).fill(0), Array(n_rows[1]).fill(0)];
+                        prior_std = [Array(n_rows[0]+1).fill(prior_std_I[0]).fill(prior_std_S[0],1),
+                                     Array(n_rows[1]+1).fill(prior_std_I[1]).fill(prior_std_S[1],1)];
+                    } else {
+                        start_index = 1;
+                        n_rows = n_firms;
+                        prior_mean = [prior_mean_S[0], prior_mean_S[1]];
+                        prior_std = [prior_std_S[0], prior_std_S[1]];
+                    }
+                    names = [NAMES.slice(start_index, n_firms[0]+1),
+                             NAMES.slice(start_index, n_firms[1]+1)];
+
 		// Write practice history
 		var practice_histories = [];
 		for (var i = 0; i < practice_n_periods; i++) {
 			practice_histories.push([]);
 			for (var j = 0; j < practice_n_firms; j++) {
-				//x = Math.round(normal(practice_prior_mean[j], practice_prior_std[i][j]));
 				x = practice_factors[i][j];
 				practice_histories[i].push(x);
 			}
@@ -562,16 +610,19 @@ async function get_timeline() {
 }
 
 		//---------Run the experiment---------
-		
-    //Initiate the experiment
-    get_timeline()
-        .then(timeline => {
-            jsPsych.init({
-                    timeline: timeline,
-                    on_finish: function(){ //Execute this when the experiment finishes
+
+                    const timeline = await get_timeline();
+                    jsPsych.init({
+                        timeline: timeline,
+                        on_finish: function(){
                             if (test_mode == true) { jsPsych.data.displayData() } else { saveData(subject_id + '.csv', jsPsych.data.dataAsCSV()) }
-                    }
-    })});
+                        }
+                    });
+
+                } // end initExperiment()
+
+                // Kick everything off
+                initExperiment();
 
 </script>
 </html>
