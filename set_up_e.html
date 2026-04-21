@@ -1,0 +1,490 @@
+<html>
+<head>
+    <title>Test Bed for Investment Experiment</title>
+
+<style>
+#config-status { color: green; margin-top: 5px; font-style: italic; }
+
+body{
+    padding-left: 30px;
+    padding-top: 30px;
+}
+
+.collapse{
+    border-collapse:collapse;
+}
+
+.bordered {
+    border: 2px solid gray;
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.quick_config li {
+    list-style-type: none;
+    margin-bottom: 9px;
+}
+
+h3 {
+    margin-bottom: 0px;
+}
+
+.no_wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* shorthand for row-gap and column-gap */
+  padding: 0; /* remove default padding/margin */
+  margin: 0;
+  list-style-type: none;
+}
+
+
+</style>
+
+<script>
+    let PERIODS = 20;
+    let PERIODS_Q = 2;
+
+    document.addEventListener("DOMContentLoaded", ready);
+    const configs = {
+        'prior_var': {
+            'name': 'Prior Var.',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 10",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "25, 22",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 30",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+            'exp_type': 'PR_VAR',
+        },
+        'sig_var_1': {
+            'name': 'Sig Var. 1',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "25, 22",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 20",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+            'exp_type': 'SIG_VAR_1',
+        },
+        'sig_var_2': {
+            'name': 'Sig Var. 2',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "25, 22",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 15",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+            'exp_type': 'SIG_VAR_2',
+        },
+        'cap_time': {
+            'name': 'Capacity Time',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "25, 22",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 30",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 12,
+            'b1_time': 5,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+            'exp_type': 'TIME',
+        },
+        'cap_freq': {
+            'name': 'Capacity Freq',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "25, 22",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 30",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "250, 750",
+            'show_hist': true,
+            'exp_type': 'FREQ',
+        },
+        'prior_mean_1': {
+            'name': 'Prior Mean 1',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "30, 20",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 30",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+            'exp_type': 'PR_MN_1',
+        },
+        'prior_mean_2': {
+            'name': 'Prior Mean 2',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "35, 15",
+            'b0_ns_std': "30, 30",
+            'b1_ns_std': "30, 30",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+            'exp_type': 'PR_MN_2',
+        },
+        'sig_hi_var': {
+            'name': 'Signal Hi Var.',
+            'b0_pr_std': "20, 20",
+            'b1_pr_std': "20, 20",
+            'b0_pr_mn': "25, 22",
+            'b1_pr_mn': "25, 22",
+            'b0_ns_std': "50, 50",
+            'b1_ns_std': "50, 50",
+            'b0_n': 2,
+            'b1_n': 2,
+            'b0_time': 10,
+            'b1_time': 10,
+            'b0_freq': "500, 500",
+            'b1_freq': "500, 500",
+            'show_hist': true,
+            'exp_type': 'SIG_VAR_HI',
+        },
+    }
+
+    function ready() {
+        // Quick Mode Checkbox
+        let qm = document.getElementById('quick_mode');
+        qm.addEventListener('change', handleQM);
+
+        //Add Quick-Config Buttons
+        qc_list = document.getElementById('quick_config_list');
+        Object.entries(configs).forEach(([key, config])  => {
+        
+            btn = document.createElement("input");
+            btn.type="button";
+            btn.id = key;
+            btn.value = config['name'];
+            btn.classList.add("quick_b");
+
+            li = document.createElement("li");
+            li.appendChild(btn);
+
+            qc_list.appendChild(li);
+        });
+
+
+        const quick_buttons = document.querySelectorAll('.quick_b');
+        quick_buttons.forEach(b => {
+            let config = configs[b.id]
+
+            b.addEventListener('click', function(event) {
+                set_configs(config);
+            });
+        });
+
+    };
+
+    function set_configs(config){
+        document.getElementById("std_S_0").value = config['b0_pr_std'];
+        document.getElementById("std_S_1").value = config['b1_pr_std'];
+        document.getElementById("mean_S_0").value = config['b0_pr_mn'];
+        document.getElementById("mean_S_1").value = config['b1_pr_mn'];
+        document.getElementById("std_N_0").value = config['b0_ns_std'];
+        document.getElementById("std_N_1").value = config['b1_ns_std'];
+        document.getElementById("n_firms_0").value = config['b0_n'];
+        document.getElementById("n_firms_1").value = config['b1_n'];
+        document.getElementById("time_limit_0").value = config['b0_time'];
+        document.getElementById("time_limit_1").value = config['b1_time'];
+        document.getElementById("npr_freq_0").value = config['b0_freq'];
+        document.getElementById("npr_freq_1").value = config['b1_freq'];
+        if (config['show_hist']) {
+            document.getElementById("show_history").checked = true;
+        } else {
+            document.getElementById("show_history").checked = false;
+        }
+        document.getElementById("exp_type").value = config['exp_type'];
+    }
+
+    function handleQM() {
+        let instr = document.getElementById('instr');
+        let practice = document.getElementById('practice');
+        let survey = document.getElementById('survey');
+        let n_periods= document.getElementById('periods');
+
+        if (this.checked) {
+            instr.checked = false;
+            practice.checked = false;
+            survey.checked = false;
+            n_periods.value= PERIODS_Q;
+        } else {
+            instr.checked = true;
+            practice.checked = true;
+            survey.checked = true;
+            n_periods.value= PERIODS;
+        }
+    }
+
+
+
+    function getStatus() { return document.getElementById('config-status'); }
+
+    async function saveConfig() {
+        const name = document.getElementById('config_name').value.trim();
+        if (!name) { alert('Please enter a config name.'); return; }
+
+        const form = document.querySelector('form');
+        const data = new FormData(form);
+        data.set('config_name', name);
+        if (!document.getElementById('show_history').checked) data.delete('show_history');
+        if (!document.getElementById('test_mode').checked)  data.delete('test_mode');
+        if (!document.getElementById('quick_mode').checked) data.delete('quick_mode');
+        if (!document.getElementById('instr').checked)      data.delete('show_instructions');
+        if (!document.getElementById('practice').checked)   data.delete('show_practice');
+        if (!document.getElementById('survey').checked)     data.delete('show_survey');
+        if (!document.getElementById('is_default').checked) data.delete('is_default');
+
+        const resp = await fetch('save_config.php', { method: 'POST', body: data });
+        const json = await resp.json();
+
+        getStatus().textContent = json.success
+            ? `Saved "${name}" successfully.`
+            : `Error saving config.`;
+
+        // Clear name and default checkbox after saving
+        document.getElementById('config_name').value = '';
+        document.getElementById('is_default').checked = false;
+
+        refreshConfigList();
+    }
+
+    async function loadConfig() {
+        const name = document.getElementById('saved_configs').value;
+        if (!name) { alert('Please select a config from the list.'); return; }
+
+        const resp = await fetch(`load_config.php?config_name=${encodeURIComponent(name)}`);
+        if (!resp.ok) { getStatus().textContent = `Config "${name}" not found.`; return; }
+
+        applyConfig(await resp.json());
+    }
+
+    async function loadDefault() {
+        const resp = await fetch('load_config.php?load_default=1');
+        if (!resp.ok) { return; } // No default set, just leave form as-is
+        const cfg = await resp.json();
+        if (!cfg.error) applyConfig(cfg);
+    }
+
+    function applyConfig(cfg) {
+        // Top section
+        document.getElementById('test_mode').checked        = cfg.test_mode === 't' || cfg.test_mode === true;
+        document.getElementById('quick_mode').checked       = cfg.quick_mode === 't' || cfg.quick_mode === true;
+        document.getElementById('instr').checked            = cfg.show_instructions === 't' || cfg.show_instructions === true;
+        document.getElementById('practice').checked         = cfg.show_practice === 't' || cfg.show_practice === true;
+        document.getElementById('survey').checked           = cfg.show_survey === 't' || cfg.show_survey === true;
+        document.getElementById('periods').value            = cfg.n_periods;
+
+        // Session configuration section
+        document.getElementById('std_S_0').value      = cfg.std_s_0;
+        document.getElementById('std_S_1').value      = cfg.std_s_1;
+        document.getElementById('mean_S_0').value     = cfg.mean_s_0;
+        document.getElementById('mean_S_1').value     = cfg.mean_s_1;
+        document.getElementById('std_N_0').value      = cfg.std_n_0;
+        document.getElementById('std_N_1').value      = cfg.std_n_1;
+        document.getElementById('n_firms_0').value    = cfg.n_firms_0;
+        document.getElementById('n_firms_1').value    = cfg.n_firms_1;
+        document.getElementById('time_limit_0').value = cfg.time_limit_0;
+        document.getElementById('time_limit_1').value = cfg.time_limit_1;
+        document.getElementById('npr_freq_0').value   = cfg.npr_freq_0;
+        document.getElementById('npr_freq_1').value   = cfg.npr_freq_1;
+        document.getElementById('show_history').checked = cfg.show_history === 't' || cfg.show_history === true;
+        document.getElementById('exp_type').value     = cfg.exp_type;
+
+        // Save/load section
+        document.getElementById('config_name').value  = cfg.config_name;
+        document.getElementById('is_default').checked = cfg.is_default === 't' || cfg.is_default === true;
+        getStatus().textContent = `Loaded "${cfg.config_name}"` + (cfg.is_default === 't' ? ' (default)' : '');
+    }
+    async function refreshConfigList() {
+        const resp = await fetch('load_config.php');
+        const list = await resp.json();
+        const sel = document.getElementById('saved_configs');
+        sel.innerHTML = '<option value="">-- saved configs --</option>';
+        list.forEach(row => {
+            const opt = document.createElement('option');
+            opt.value = row.config_name;
+            opt.textContent = row.config_name + (row.is_default === 't' ? ' ★' : '');
+            sel.appendChild(opt);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        ready();
+        refreshConfigList();
+        loadDefault(); // Auto-load default config on page load
+    });
+</script>
+
+</head>
+<body>
+
+    <form method="GET" action="code/INVEST.html">
+        <ul>
+            <li><a href="/code/INVEST.html">Experiment Link</a></li>
+            <li><a href="/code/download_all_data.php">Get Data</a></li>
+        </ul>
+
+
+            <table class="collapse">
+            <tr>
+                <td>Test Mode</td>
+                <td><input id="test_mode" type="checkbox" name="test_mode"/></td>
+            </tr>
+            <tr>
+                <td>Quick Mode</td>
+                <td><input id="quick_mode" type="checkbox" name="quick_mode"/></td>
+            </tr>
+            <tr>
+                <td>Show Instructions (includes consent and post-practice instructions)</td>
+                <td><input id='instr' type="checkbox" name="show_instructions" checked/></td>
+            </tr>
+            <tr>
+                <td>Show Practice</td>
+                <td><input id='practice' type="checkbox" name="show_practice" checked/></td>
+            </tr>
+            <tr>
+                <td>Show Survey</td>
+                <td><input id='survey' type="checkbox" name="show_survey" checked/></td>
+            </tr>
+            <tr>
+                <td>Number Periods (both blocks)</td>
+                <td><input id='periods' type="text" name="n_periods" value="20"></td>
+            </tr>
+        </table>
+       
+        <h3>Quick Config</h3>
+        <div class="bordered">
+        <ul class="no_wrap" id="quick_config_list" class=quick_config>
+        </ul>
+        </div>
+
+        <h3>Session Configuration</h3>
+        <table class="bordered">
+            <tr>
+                <td>&nbsp;</td>
+                <td>Block 0</td>
+                <td>Block 1</td>
+            </tr>
+            <!--
+            <tr>
+                <td>Index Std.</td>
+                <td><input type=text value="5" name="std_I_0"/></td>
+                <td><input type=text value="30" name="std_I_1"/></td>
+            </tr>
+            -->
+            <tr>
+                <td>Stock Std.</td>
+                <td><input type=text value="30,30" name="std_S_0" id="std_S_0"/></td>
+                <td><input type=text value="30,30" name="std_S_1" id="std_S_1"/></td>
+            </tr>
+            <tr>
+                <td>Stock Means</td>
+                <td><input type=text value="0,0" name="mean_S_0" id="mean_S_0"/></td>
+                <td><input type=text value="0,0" name="mean_S_1" id="mean_S_1"/></td>
+            </tr>
+            <tr>
+                <td>Noise Std.</td>
+                <td><input type=text value="5,30" name="std_N_0" id="std_N_0"/></td>
+                <td><input type=text value="30,30" name="std_N_1" id="std_N_1"/></td>
+            </tr>
+            <tr>
+                <td>N Firms</td>
+                <td><input type=text value="2" name="n_firms_0" id="n_firms_0"/></td>
+                <td><input type=text value="2" name="n_firms_1" id="n_firms_1"/></td>
+            </tr>
+            <tr>
+                <td>Time Limit</td>
+                <td><input type=text value="12" name="time_limit_0" id="time_limit_0"/></td>
+                <td><input type=text value="12" name="time_limit_1" id="time_limit_1"/></td>
+            </tr>
+            <tr>
+                <td>NPR Freq</td>
+                <td><input type=text value="250,1000" name="npr_freq_0" id="npr_freq_0"/></td>
+                <td><input type=text value="500,500" name="npr_freq_1" id="npr_freq_1"/></td>
+            </tr>
+            <tr>
+                <td>Show History</td>
+                <td colspan="2"><input type="checkbox" name="show_history" id="show_history" checked/></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input id="exp_type" type="text" name="exp_type" value="FREE"/>
+                </td>
+            </tr>
+        </table>
+
+<h3>Save / Load Configuration</h3>
+<div class="bordered">
+    <table>
+        <tr>
+            <td>Config Name</td>
+            <td><input type="text" id="config_name" placeholder="e.g. my_experiment"/></td>
+        </tr>
+        <tr>
+            <td>Set as Default</td>
+            <td><input type="checkbox" id="is_default" name="is_default"/></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="button" value="Save Config" onclick="saveConfig()"/>
+                &nbsp;
+                <input type="button" value="Load Config" onclick="loadConfig()"/>
+                &nbsp;
+                <select id="saved_configs">
+                    <option value="">-- saved configs --</option>
+                </select>
+                <input type="button" value="Refresh List" onclick="refreshConfigList()"/>
+            </td>
+        </tr>
+    </table>
+    <div id="config-status"></div>
+</div>
+
+        <input type="submit"/>
+    </form>
+</body>
+</html>
