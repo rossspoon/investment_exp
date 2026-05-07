@@ -30,6 +30,8 @@
 			trial_data.npr_last = [];
                         trial_data.test_mode = trial.test_mode;
                         trial_data.frequency = trial.frequency;
+                        trial_data.period = trial.period + 1;
+                        trial_data.out_of = trial.n_periods;
 
 
 			//----------------------- trial parameters -----------------------

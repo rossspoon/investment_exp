@@ -46,144 +46,6 @@ h3 {
     let PERIODS_Q = 2;
 
     document.addEventListener("DOMContentLoaded", ready);
-    const configs = {
-        'prior_var': {
-            'name': 'Prior Var.',
-            'b0_pr_std': "20, 20",
-            'b1_pr_std': "20, 10",
-            'b0_pr_mn': "25, 22",
-            'b1_pr_mn': "25, 22",
-            'b0_ns_std': "30, 30",
-            'b1_ns_std': "30, 30",
-            'b0_n': 2,
-            'b1_n': 2,
-            'b0_time': 10,
-            'b1_time': 10,
-            'b0_freq': "500, 500",
-            'b1_freq': "500, 500",
-            'show_hist': true,
-            'exp_type': 'PR_VAR',
-        },
-        'sig_var_1': {
-            'name': 'Sig Var. 1',
-            'b0_pr_std': "20, 20",
-            'b1_pr_std': "20, 20",
-            'b0_pr_mn': "25, 22",
-            'b1_pr_mn': "25, 22",
-            'b0_ns_std': "30, 30",
-            'b1_ns_std': "30, 20",
-            'b0_n': 2,
-            'b1_n': 2,
-            'b0_time': 10,
-            'b1_time': 10,
-            'b0_freq': "500, 500",
-            'b1_freq': "500, 500",
-            'show_hist': true,
-            'exp_type': 'SIG_VAR_1',
-        },
-        'sig_var_2': {
-            'name': 'Sig Var. 2',
-            'b0_pr_std': "20, 20",
-            'b1_pr_std': "20, 20",
-            'b0_pr_mn': "25, 22",
-            'b1_pr_mn': "25, 22",
-            'b0_ns_std': "30, 30",
-            'b1_ns_std': "30, 15",
-            'b0_n': 2,
-            'b1_n': 2,
-            'b0_time': 10,
-            'b1_time': 10,
-            'b0_freq': "500, 500",
-            'b1_freq': "500, 500",
-            'show_hist': true,
-            'exp_type': 'SIG_VAR_2',
-        },
-        'cap_time': {
-            'name': 'Capacity Time',
-            'b0_pr_std': "20, 20",
-            'b1_pr_std': "20, 20",
-            'b0_pr_mn': "25, 22",
-            'b1_pr_mn': "25, 22",
-            'b0_ns_std': "30, 30",
-            'b1_ns_std': "30, 30",
-            'b0_n': 2,
-            'b1_n': 2,
-            'b0_time': 12,
-            'b1_time': 5,
-            'b0_freq': "500, 500",
-            'b1_freq': "500, 500",
-            'show_hist': true,
-            'exp_type': 'TIME',
-        },
-        'cap_freq': {
-            'name': 'Capacity Freq',
-            'b0_pr_std': "20, 20",
-            'b1_pr_std': "20, 20",
-            'b0_pr_mn': "25, 22",
-            'b1_pr_mn': "25, 22",
-            'b0_ns_std': "30, 30",
-            'b1_ns_std': "30, 30",
-            'b0_n': 2,
-            'b1_n': 2,
-            'b0_time': 10,
-            'b1_time': 10,
-            'b0_freq': "500, 500",
-            'b1_freq': "250, 750",
-            'show_hist': true,
-            'exp_type': 'FREQ',
-        },
-        'prior_mean_1': {
-            'name': 'Prior Mean 1',
-            'b0_pr_std': "20, 20",
-            'b1_pr_std': "20, 20",
-            'b0_pr_mn': "25, 22",
-            'b1_pr_mn': "30, 20",
-            'b0_ns_std': "30, 30",
-            'b1_ns_std': "30, 30",
-            'b0_n': 2,
-            'b1_n': 2,
-            'b0_time': 10,
-            'b1_time': 10,
-            'b0_freq': "500, 500",
-            'b1_freq': "500, 500",
-            'show_hist': true,
-            'exp_type': 'PR_MN_1',
-        },
-        'prior_mean_2': {
-            'name': 'Prior Mean 2',
-            'b0_pr_std': "20, 20",
-            'b1_pr_std': "20, 20",
-            'b0_pr_mn': "25, 22",
-            'b1_pr_mn': "35, 15",
-            'b0_ns_std': "30, 30",
-            'b1_ns_std': "30, 30",
-            'b0_n': 2,
-            'b1_n': 2,
-            'b0_time': 10,
-            'b1_time': 10,
-            'b0_freq': "500, 500",
-            'b1_freq': "500, 500",
-            'show_hist': true,
-            'exp_type': 'PR_MN_2',
-        },
-        'sig_hi_var': {
-            'name': 'Signal Hi Var.',
-            'b0_pr_std': "20, 20",
-            'b1_pr_std': "20, 20",
-            'b0_pr_mn': "25, 22",
-            'b1_pr_mn': "25, 22",
-            'b0_ns_std': "50, 50",
-            'b1_ns_std': "50, 50",
-            'b0_n': 2,
-            'b1_n': 2,
-            'b0_time': 10,
-            'b1_time': 10,
-            'b0_freq': "500, 500",
-            'b1_freq': "500, 500",
-            'show_hist': true,
-            'exp_type': 'SIG_VAR_HI',
-        },
-    }
 
     function ready() {
         // Quick Mode Checkbox
@@ -191,30 +53,30 @@ h3 {
         qm.addEventListener('change', handleQM);
 
         //Add Quick-Config Buttons
-        qc_list = document.getElementById('quick_config_list');
-        Object.entries(configs).forEach(([key, config])  => {
+        //qc_list = document.getElementById('quick_config_list');
+        //Object.entries(configs).forEach(([key, config])  => {
         
-            btn = document.createElement("input");
-            btn.type="button";
-            btn.id = key;
-            btn.value = config['name'];
-            btn.classList.add("quick_b");
+            //btn = document.createElement("input");
+            //btn.type="button";
+            //btn.id = key;
+            //btn.value = config['name'];
+            //btn.classList.add("quick_b");
+//
+            //li = document.createElement("li");
+            //li.appendChild(btn);
+//
+            //qc_list.appendChild(li);
+        //});
 
-            li = document.createElement("li");
-            li.appendChild(btn);
 
-            qc_list.appendChild(li);
-        });
-
-
-        const quick_buttons = document.querySelectorAll('.quick_b');
-        quick_buttons.forEach(b => {
-            let config = configs[b.id]
-
-            b.addEventListener('click', function(event) {
-                set_configs(config);
-            });
-        });
+        //const quick_buttons = document.querySelectorAll('.quick_b');
+        //quick_buttons.forEach(b => {
+            //let config = configs[b.id]
+//
+            //b.addEventListener('click', function(event) {
+                //set_configs(config);
+            //});
+        //});
 
     };
 
@@ -276,7 +138,9 @@ h3 {
         if (!document.getElementById('practice').checked)   data.delete('show_practice');
         if (!document.getElementById('survey').checked)     data.delete('show_survey');
         if (!document.getElementById('is_default').checked) data.delete('is_default');
-
+for (let [key, value] of data.entries()) {
+    console.log(key, value);
+}
         const resp = await fetch('save_config.php', { method: 'POST', body: data });
         const json = await resp.json();
 
@@ -356,15 +220,59 @@ h3 {
         refreshConfigList();
         loadDefault(); // Auto-load default config on page load
     });
+
+    async function deleteConfig() {
+        const name = document.getElementById('saved_configs').value;
+        if (!name) { alert('Please select a config from the list to delete.'); return; }
+        if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+
+        const resp = await fetch(`delete_config.php?config_name=${encodeURIComponent(name)}`);
+        const json = await resp.json();
+
+        getStatus().textContent = json.success
+            ? `Deleted "${name}" successfully.`
+            : `Error deleting config.`;
+
+        refreshConfigList();
+    }
+
+    function addUncheckedBoxes() {
+        const checkboxes = document.querySelectorAll('form input[type="checkbox"]');
+        checkboxes.forEach(cb => {
+            if (!cb.checked) {
+                // Create a hidden input with the same name and value 'false'
+                const hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = cb.name;
+                hidden.value = 'false';
+                cb.parentNode.appendChild(hidden);
+            }
+        });
+    }
+
+    async function clearData() {
+        const status = document.getElementById('clear-status');
+        if (!confirm('Are you sure you want to delete ALL experiment data? This cannot be undone.')) return;
+
+        const resp = await fetch('code/clear_data.php');
+        const json = await resp.json();
+
+        status.textContent = json.success
+            ? `Cleared successfully — ${json.rows_deleted} row(s) deleted.`
+            : 'Error clearing data.';
+    }
 </script>
 
 </head>
 <body>
 
-    <form method="GET" action="code/INVEST.html">
+    <form method="GET" action="code/INVEST.html" onsubmit="addUncheckedBoxes()">
         <ul>
             <li><a href="/code/INVEST.html">Experiment Link</a></li>
             <li><a href="/code/download_all_data.php">Get Data</a></li>
+            <li> <input type="button" value="Clear Experiment Data" onclick="clearData()"/>
+                <span id="clear-status" style="margin-left: 15px; font-style: italic;"></span>
+            </li>
         </ul>
 
 
@@ -395,11 +303,6 @@ h3 {
             </tr>
         </table>
        
-        <h3>Quick Config</h3>
-        <div class="bordered">
-        <ul class="no_wrap" id="quick_config_list" class=quick_config>
-        </ul>
-        </div>
 
         <h3>Session Configuration</h3>
         <table class="bordered">
@@ -408,13 +311,6 @@ h3 {
                 <td>Block 0</td>
                 <td>Block 1</td>
             </tr>
-            <!--
-            <tr>
-                <td>Index Std.</td>
-                <td><input type=text value="5" name="std_I_0"/></td>
-                <td><input type=text value="30" name="std_I_1"/></td>
-            </tr>
-            -->
             <tr>
                 <td>Stock Std.</td>
                 <td><input type=text value="30,30" name="std_S_0" id="std_S_0"/></td>
@@ -473,6 +369,8 @@ h3 {
                 <input type="button" value="Save Config" onclick="saveConfig()"/>
                 &nbsp;
                 <input type="button" value="Load Config" onclick="loadConfig()"/>
+                &nbsp;
+                <input type="button" value="Delete Config" onclick="deleteConfig()"/>
                 &nbsp;
                 <select id="saved_configs">
                     <option value="">-- saved configs --</option>

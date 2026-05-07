@@ -43,6 +43,8 @@ colFooter = colHeader;
 
 var lineWidth = 1;
 var dotRadius = 5;
+var all_charts = [];
+var all_densities= [];
 
 //----------------------- end color palette -------------------
 
@@ -200,9 +202,9 @@ jsPsych.plugins["invest"] = (function() {
                 trial_data.random_order_stocks = trial.random_order_stocks;
                 trial_data.true_total_val = [];
 
-                trial_data.investments = [];
-                trial_data.returns = [];
-                trial_data.results = [];
+                trial_data.investments = [0,0];
+                trial_data.returns = [0,0];
+                trial_data.results = [0,0];
                 trial_data.total_result = 0;
 
                 trial_data.show_history = trial.show_history;
@@ -211,6 +213,8 @@ jsPsych.plugins["invest"] = (function() {
                 trial_data.balance = 0
 
                 trial_data.show_index = trial.show_index;
+                trial_data.period = trial.period + 1;
+                trial_data.out_of = trial.n_periods;
 
                 //save trial parameters you want to save around here
 
@@ -304,6 +308,66 @@ jsPsych.plugins["invest"] = (function() {
                 var rowHeight = (windowHeight - (headerHeight + footerHeight + 2 * top_bottom_space + instrSpace)) / (nFirms + 1);
                 rowHeight--
 
+                function drawHorizontalLine(chart, y) {
+                    const canvas = chart.canvas;
+                    const ctx = canvas.getContext('2d');
+                    const yPixel = chart.scales['y-axis-1'].getPixelForValue(y);
+                    const left   = chart.chartArea.left;
+                    const right  = chart.chartArea.right;
+
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(left, yPixel);
+                    ctx.lineTo(right, yPixel);
+                    ctx.strokeStyle = 'red';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([6, 3]);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+                function drawHistogram(k) {
+                    const data = trial.test_draws[k];
+                    const chart = all_densities[k];
+
+                    const labels = chart.data.labels;
+                    const min = Math.min(...labels);
+                    const max = Math.max(...labels);
+
+                    const binCount = 50;
+                    const binWidth = (max - min) / binCount;
+
+                    const bins = Array(binCount).fill(0);
+                    data.forEach(val => {
+                        let i = Math.floor((val - min) / binWidth);
+                        i = Math.max(0, Math.min(binCount - 1, i));
+                        bins[i]++;
+                    });
+
+
+                    const maxDensity = Math.max(...chart.data.datasets[0].data);
+                    const maxBin = Math.max(...bins);
+
+
+                    const mappedData = labels.map(x => {
+                        const binIndex = Math.max(0, Math.min(binCount - 1, Math.floor((x - min) / binWidth)));
+                        return (bins[binIndex] / maxBin) * maxDensity;
+                    });
+
+
+                    chart.data.datasets.push({
+                        data: mappedData,
+                        backgroundColor: 'rgba(70, 130, 180, 0.4)',
+                        borderColor: 'rgba(70, 130, 180, 0.8)',
+                        borderWidth: 1,
+                        fill: true,
+                        pointRadius: 0,        // hide individual points
+                        lineTension: 0,        // sharp steps, no curve
+                    });
+
+
+                    chart.update();
+                }
+
 
                 function feedback () {
                     var total_reward = trial_data.balance;
@@ -323,11 +387,21 @@ jsPsych.plugins["invest"] = (function() {
                             trial_data.returns[i] = ret;
 
                             inv = Number($("#input_"+i).val());
+                            trial_data.investments[i] = inv;
                             result = (inv + (ret * inv)/100);
                             trial_data.results[i] = result;
 
+
                             p_sign = ret>=0 ? "+": "";
                             $("#return_amt_"+i).html(p_sign + ret + "%");
+
+                            if (trial.test_mode){
+                                drawHorizontalLine(all_charts[i], ret);
+
+                                //get test draws from true dist
+                                drawHistogram(k);
+                            }
+
 
                             if (isIndexRow){
                                 continue;
@@ -674,9 +748,10 @@ jsPsych.plugins["invest"] = (function() {
 
                         }
 
-                        var all_charts = [];
 
                         // Charts 1
+                        all_charts = []; //reset all charts, this seems to persist from round to round
+                        all_densities = [];
                         for (var i = 0; i < nFirms; i++) {
 
                                 const ii = i;
@@ -851,8 +926,10 @@ jsPsych.plugins["invest"] = (function() {
                                         }
 
                                 });
+                                
 
                                 all_charts.push(npr_chart);
+                                all_densities.push(density_chart);
 
                                 // hover stuff
                                 $(document.getElementById("table_" + i)).hover(

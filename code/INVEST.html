@@ -248,7 +248,7 @@
                             var block = 1;
                         }
                         var idx = blocks[block];
-                        for (var j = 0; j < n_rows[blocks[0]]; j++) {
+                        for (var j = 0; j < n_rows[idx]; j++) {
                                 mu = prior_mean[idx][j];
                                 std = prior_std[idx][j];
                                 x = Math.round(normal(mu, std));
@@ -257,9 +257,37 @@
                                 }
                                 histories[i].push(x); }
 		}
-		
+
+                // Each block is a list with an element for each row
+                //the elements for each row is a list of 100 random draws for that asset
+                var test_draws = [];
+                if (test_mode) {
+                    for (var block = 0; block < 2; block++) {
+                            var block_draws = [];
+                            test_draws.push(block_draws);
+                            var idx = blocks[block];
+
+                            //loop rows
+                            for (var j = 0; j < n_rows[idx]; j++) {
+                                var row_draws = [];
+                                block_draws.push(row_draws);
+                                for(var k=0; k<500; k++) {
+                                    mu = prior_mean[idx][j];
+                                    std = prior_std[idx][j];
+                                    x = Math.round(normal(mu, std));
+                                    while (x > mu + HIST_BOUND || x < mu - HIST_BOUND){
+                                        x = Math.round(normal(mu, std));
+                                    }
+                                    row_draws.push(x);
+                                }
+                            }
+                    }
+                }
+
 		// Randomize order of rows
-		var random_order_stocks_practice = []; var random_order_stocks_0 = [];	var random_order_stocks_1 = [];
+		var random_order_stocks_practice = [];
+                var random_order_stocks_0 = [];
+                var random_order_stocks_1 = [];
 		for (var j = 0; j < practice_n_firms; j++) random_order_stocks_practice.push(j);
 		for (var j = 0; j < n_rows[0]; j++) random_order_stocks_0.push(j);
 		for (var j = 0; j < n_rows[1]; j++) random_order_stocks_1.push(j);
@@ -277,7 +305,6 @@
 		jsPsych.data.addProperties({
 		  subject: subject_id,
 		  npr_frequency: npr_frequency,
-		  error_std: error_std,
 		  payoff_a: a,
 		  payoff_b: b,
 		  n_periods: n_periods,
@@ -520,7 +547,7 @@ async function get_timeline() {
                                             instructions: style_practice_forecast_instruction_fn(practice_factors, t),
                                             yMax: 100,
                                             yMin: -100,
-                                            data: { stage: "forecast_practice" },
+                                            data: { stage: "invest_practice" },
                                             show_index: show_index,
                                             show_history: show_history,
                                     };
@@ -586,10 +613,11 @@ async function get_timeline() {
                                     instructions: "",
                                     yMax: 100,
                                     yMin: -100,
-                                    data: { stage: "forecast_real" },
+                                    data: { stage: "invest" },
                                     show_index: show_index,
                                     test_mode: test_mode,
                                     show_history: show_history,
+                                    test_draws: test_draws[bl],
                             };
 
                             timeline.push(view_trial);
@@ -615,7 +643,7 @@ async function get_timeline() {
                     jsPsych.init({
                         timeline: timeline,
                         on_finish: function(){
-                            if (test_mode == true) { jsPsych.data.displayData() } else { saveData(subject_id + '.csv', jsPsych.data.dataAsCSV()) }
+                            saveData(subject_id + '.csv', jsPsych.data.dataAsCSV())
                         }
                     });
 
