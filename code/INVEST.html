@@ -126,7 +126,7 @@
                 var treatments = ["variance", "size", "time"];
                 var blocks = jsPsych.randomization.shuffle([0,1]); // block order
 
-                var NAMES = ["Index", "Stock A", "Stock B", "Stock C", "Stock D", "Stock E", "Stock F", "Stock G", "Stock H"]
+                var NAMES = ["Stock A", "Stock B", "Stock C", "Stock D", "Stock E", "Stock F", "Stock G", "Stock H"]
                 var HIST_BOUND = 35;
                 error_std = 10; //standard deviation of npr errors
 
@@ -147,7 +147,7 @@
                     // Use DB config values, with URL params as override, then hardcoded fallback
                     test_mode        = parseBool(get_or('test_mode', cfg.test_mode), false);
                     exp_type         = get_or('exp_type', cfg.exp_type || 'NO_CONFIG');
-                    show_index       = parseBool(get_or('show_index', false), false);
+                    show_index       = false;
                     show_instructions = parseBool(get_or('show_instructions', cfg.show_instructions), false);
                     show_practice    = parseBool(get_or('show_practice',    cfg.show_practice),    false);
                     show_survey      = parseBool(get_or('show_survey',      cfg.show_survey),      false);
@@ -174,8 +174,8 @@
                     var std_N_1  = parseArr(get_or('std_N_1', cfg.std_n_1), [30,30]);
                     noise_std    = [std_N_0, std_N_1];
 
-                    var nf_0     = parseInt(get_or('n_firms_0', cfg.n_firms_0 || 4));
-                    var nf_1     = parseInt(get_or('n_firms_1', cfg.n_firms_1 || 4));
+                    var nf_0     = parseInt(get_or('n_firms_0', cfg.n_firms_0 || 2));
+                    var nf_1     = parseInt(get_or('n_firms_1', cfg.n_firms_1 || 2));
                     n_firms      = [nf_0, nf_1];
 
                     var tl_0     = parseInt(get_or('time_limit_0', cfg.time_limit_0 || 12));
@@ -187,7 +187,7 @@
 
                 
                 // These will be set inside initExperiment() after config is loaded
-                var start_index, n_rows, prior_mean, prior_std, names;
+                var start_index, n_firms, prior_mean, prior_std, names;
 
 		// Practice parameters
 		var practice_n_firms = 2;
@@ -214,20 +214,11 @@
                     n_periods = parseInt(get_or('n_periods', cfg.n_periods));
 
                     // adjust means/stds based on whether to show the index
-                    if (show_index) {
-                        start_index = 0;
-                        n_rows = [n_firms[0]+1, n_firms[1]+1];
-                        prior_mean = [Array(n_rows[0]).fill(0), Array(n_rows[1]).fill(0)];
-                        prior_std = [Array(n_rows[0]+1).fill(prior_std_I[0]).fill(prior_std_S[0],1),
-                                     Array(n_rows[1]+1).fill(prior_std_I[1]).fill(prior_std_S[1],1)];
-                    } else {
-                        start_index = 1;
-                        n_rows = n_firms;
-                        prior_mean = [prior_mean_S[0], prior_mean_S[1]];
-                        prior_std = [prior_std_S[0], prior_std_S[1]];
-                    }
-                    names = [NAMES.slice(start_index, n_firms[0]+1),
-                             NAMES.slice(start_index, n_firms[1]+1)];
+                    prior_mean = [prior_mean_S[0], prior_mean_S[1]];
+                    prior_std = [prior_std_S[0], prior_std_S[1]];
+
+                    names = [NAMES.slice(0, n_firms[0]+1),
+                             NAMES.slice(0, n_firms[1]+1)];
 
 		// Write practice history
 		var practice_histories = [];
@@ -248,11 +239,14 @@
                             var block = 1;
                         }
                         var idx = blocks[block];
-                        for (var j = 0; j < n_rows[idx]; j++) {
+                        for (var j = 0; j < n_firms[idx]; j++) {
                                 mu = prior_mean[idx][j];
                                 std = prior_std[idx][j];
                                 x = Math.round(normal(mu, std));
-                                while (x > mu + HIST_BOUND || x < mu - HIST_BOUND){
+                                //while (x > mu + HIST_BOUND || x < mu - HIST_BOUND){
+                                    //x = Math.round(normal(mu, std));
+                                //}
+                                while (x > 100 || x < -100){
                                     x = Math.round(normal(mu, std));
                                 }
                                 histories[i].push(x); }
@@ -260,22 +254,22 @@
 
                 // Each block is a list with an element for each row
                 //the elements for each row is a list of 100 random draws for that asset
-                var test_draws = [];
+                var test_draws = [[],[]];
                 if (test_mode) {
                     for (var block = 0; block < 2; block++) {
                             var block_draws = [];
-                            test_draws.push(block_draws);
                             var idx = blocks[block];
+                            test_draws[idx] = block_draws;
 
                             //loop rows
-                            for (var j = 0; j < n_rows[idx]; j++) {
+                            for (var j = 0; j < n_firms[idx]; j++) {
                                 var row_draws = [];
                                 block_draws.push(row_draws);
                                 for(var k=0; k<500; k++) {
                                     mu = prior_mean[idx][j];
                                     std = prior_std[idx][j];
                                     x = Math.round(normal(mu, std));
-                                    while (x > mu + HIST_BOUND || x < mu - HIST_BOUND){
+                                    while (x > 100 || x < -100){
                                         x = Math.round(normal(mu, std));
                                     }
                                     row_draws.push(x);
@@ -289,8 +283,8 @@
                 var random_order_stocks_0 = [];
                 var random_order_stocks_1 = [];
 		for (var j = 0; j < practice_n_firms; j++) random_order_stocks_practice.push(j);
-		for (var j = 0; j < n_rows[0]; j++) random_order_stocks_0.push(j);
-		for (var j = 0; j < n_rows[1]; j++) random_order_stocks_1.push(j);
+		for (var j = 0; j < n_firms[0]; j++) random_order_stocks_0.push(j);
+		for (var j = 0; j < n_firms[1]; j++) random_order_stocks_1.push(j);
 		//var random_order_stocks = jsPsych.randomization.shuffle(random_order_stocks); //shuffle order completely
 		var practice_random_order_stocks = randomize(random_order_stocks_practice);
                 var rand_order_0 = randomize(random_order_stocks_0);

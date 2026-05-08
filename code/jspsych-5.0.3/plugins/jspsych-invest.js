@@ -325,9 +325,11 @@ jsPsych.plugins["invest"] = (function() {
                     ctx.stroke();
                     ctx.restore();
                 }
-                function drawHistogram(k) {
-                    const data = trial.test_draws[k];
-                    const chart = all_densities[k];
+
+                function drawHistogram(i) {
+                    const k = random_order_stocks[i];      // ← resolve stock identity from row
+                    const data = trial.test_draws[k];      // ← correct stock's draws
+                    const chart = all_densities[i];        // ← correct row's chart
 
                     const labels = chart.data.labels;
                     const min = Math.min(...labels);
@@ -399,7 +401,7 @@ jsPsych.plugins["invest"] = (function() {
                                 drawHorizontalLine(all_charts[i], ret);
 
                                 //get test draws from true dist
-                                drawHistogram(k);
+                                drawHistogram(i);
                             }
 
 

@@ -766,6 +766,7 @@
                                                         over = ii;
 							npr_chart = all_charts[ii];
                                                         ridx = random_order_stocks[ii]
+                                                        clearInterval(overInterval);   // ensure there is at most only one interval running
                                                         overInterval = setInterval(updateNPR, frequency[ridx], ridx);
 
 							npr_chart.data.datasets[0].data = NPR_plot_last_1[ii];
@@ -787,7 +788,6 @@
 
 						function () {
 
-                                                        over = n_rows+1;
                                                         clearInterval(overInterval);
 
 							mouseTimes[random_order_stocks[ii]] += ((new Date()).getTime()) - trial_data.userStart - trial_data.eventTimes_time.slice(-1)[0];
