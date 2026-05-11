@@ -282,146 +282,221 @@ h3 {
             document.querySelector('input[name="treatment_block"][value="1"]').checked = true;
         }
     }
+
+    function copyConfig() {
+        const cfg = {
+            test_mode:         document.getElementById('test_mode').checked,
+            quick_mode:        document.getElementById('quick_mode').checked,
+            show_instructions: document.getElementById('instr').checked,
+            show_practice:     document.getElementById('practice').checked,
+            show_survey:       document.getElementById('survey').checked,
+            n_periods:         document.getElementById('periods').value,
+            std_s_0:           document.getElementById('std_S_0').value,
+            std_s_1:           document.getElementById('std_S_1').value,
+            mean_s_0:          document.getElementById('mean_S_0').value,
+            mean_s_1:          document.getElementById('mean_S_1').value,
+            std_n_0:           document.getElementById('std_N_0').value,
+            std_n_1:           document.getElementById('std_N_1').value,
+            n_firms_0:         document.getElementById('n_firms_0').value,
+            n_firms_1:         document.getElementById('n_firms_1').value,
+            time_limit_0:      document.getElementById('time_limit_0').value,
+            time_limit_1:      document.getElementById('time_limit_1').value,
+            npr_freq_0:        document.getElementById('npr_freq_0').value,
+            npr_freq_1:        document.getElementById('npr_freq_1').value,
+            show_history:      document.getElementById('show_history').checked,
+            exp_type:          document.getElementById('exp_type').value,
+            block0_role:       document.getElementById('block0_role').value,
+            block1_role:       document.getElementById('block1_role').value,
+            is_default:        document.getElementById('is_default').checked,
+            config_name:       document.getElementById('config_name').value,
+        };
+        const json = JSON.stringify(cfg, null, 2);
+        navigator.clipboard.writeText(json).then(() => {
+            getStatus().textContent = 'Config copied to clipboard.';
+        });
+        document.getElementById('config_paste').value = json;
+    }
+
+    function pasteConfig() {
+        const text = document.getElementById('config_paste').value.trim();
+        if (!text) { alert('Paste a config into the text box first.'); return; }
+        try {
+            const cfg = JSON.parse(text);
+            Object.keys(cfg).forEach(k => {
+                if (cfg[k] === true)  cfg[k] = 't';
+                if (cfg[k] === false) cfg[k] = 'f';
+            });
+            applyConfig(cfg);
+            getStatus().textContent = 'Config applied from paste.';
+        } catch(e) {
+            alert('Invalid config JSON: ' + e.message);
+        }
+    }
 </script>
 
 </head>
 <body>
 
     <form method="GET" action="code/INVEST.html" onsubmit="addUncheckedBoxes()">
+
+        <!-- Top links bar -->
         <ul>
             <li><a href="/code/INVEST.html">Experiment Link</a></li>
             <li><a href="/code/download_all_data.php">Get Data</a></li>
-            <li> <input type="button" value="Clear Experiment Data" onclick="clearData()"/>
+            <li>
+                <input type="button" value="Clear Experiment Data" onclick="clearData()"/>
                 <span id="clear-status" style="margin-left: 15px; font-style: italic;"></span>
             </li>
         </ul>
 
+        <!-- Two column layout -->
+        <div style="display: flex; gap: 40px; align-items: flex-start;">
 
-            <table class="collapse">
-            <tr>
-                <td>Test Mode</td>
-                <td><input id="test_mode" type="checkbox" name="test_mode"/></td>
-            </tr>
-            <tr>
-                <td>Quick Mode</td>
-                <td><input id="quick_mode" type="checkbox" name="quick_mode"/></td>
-            </tr>
-            <tr>
-                <td>Show Instructions (includes consent and post-practice instructions)</td>
-                <td><input id='instr' type="checkbox" name="show_instructions" checked/></td>
-            </tr>
-            <tr>
-                <td>Show Practice</td>
-                <td><input id='practice' type="checkbox" name="show_practice" checked/></td>
-            </tr>
-            <tr>
-                <td>Show Survey</td>
-                <td><input id='survey' type="checkbox" name="show_survey" checked/></td>
-            </tr>
-            <tr>
-                <td>Number Periods (both blocks)</td>
-                <td><input id='periods' type="text" name="n_periods" value="20"></td>
-            </tr>
-        </table>
-       
+            <!-- LEFT COLUMN: configuration parameters -->
+            <div>
+                <table class="collapse">
+                    <tr>
+                        <td>Test Mode</td>
+                        <td><input id="test_mode" type="checkbox" name="test_mode"/></td>
+                    </tr>
+                    <tr>
+                        <td>Quick Mode</td>
+                        <td><input id="quick_mode" type="checkbox" name="quick_mode"/></td>
+                    </tr>
+                    <tr>
+                        <td>Show Instructions (includes consent and post-practice instructions)</td>
+                        <td><input id='instr' type="checkbox" name="show_instructions" checked/></td>
+                    </tr>
+                    <tr>
+                        <td>Show Practice</td>
+                        <td><input id='practice' type="checkbox" name="show_practice" checked/></td>
+                    </tr>
+                    <tr>
+                        <td>Show Survey</td>
+                        <td><input id='survey' type="checkbox" name="show_survey" checked/></td>
+                    </tr>
+                    <tr>
+                        <td>Number Periods (both blocks)</td>
+                        <td><input id='periods' type="text" name="n_periods" value="20"></td>
+                    </tr>
+                </table>
 
-        <h3>Session Configuration</h3>
-        <table class="bordered">
-            <tr>
-                <td>&nbsp;</td>
-                <td>Block 0</td>
-                <td>Block 1</td>
-            </tr>
-            <tr>
-                <td>Stock Std.</td>
-                <td><input type=text value="30,30" name="std_S_0" id="std_S_0"/></td>
-                <td><input type=text value="30,30" name="std_S_1" id="std_S_1"/></td>
-            </tr>
-            <tr>
-                <td>Stock Means</td>
-                <td><input type=text value="0,0" name="mean_S_0" id="mean_S_0"/></td>
-                <td><input type=text value="0,0" name="mean_S_1" id="mean_S_1"/></td>
-            </tr>
-            <tr>
-                <td>Noise Std.</td>
-                <td><input type=text value="5,30" name="std_N_0" id="std_N_0"/></td>
-                <td><input type=text value="30,30" name="std_N_1" id="std_N_1"/></td>
-            </tr>
-            <tr>
-                <td>N Firms</td>
-                <td><input type=text value="2" name="n_firms_0" id="n_firms_0"/></td>
-                <td><input type=text value="2" name="n_firms_1" id="n_firms_1"/></td>
-            </tr>
-            <tr>
-                <td>Time Limit</td>
-                <td><input type=text value="12" name="time_limit_0" id="time_limit_0"/></td>
-                <td><input type=text value="12" name="time_limit_1" id="time_limit_1"/></td>
-            </tr>
-            <tr>
-                <td>NPR Freq</td>
-                <td><input type=text value="250,1000" name="npr_freq_0" id="npr_freq_0"/></td>
-                <td><input type=text value="500,500" name="npr_freq_1" id="npr_freq_1"/></td>
-            </tr>
-            <tr>
-                <td>Treatment</td>
-                <td>
-                    <input type="radio" name="treatment_block" value="0" 
-                           onchange="handleTreatment(this)"/> 
-                </td>
-                <td>
-                    <input type="radio" name="treatment_block" value="1" 
-                           onchange="handleTreatment(this)"/> 
-                </td>
-            </tr>
-            <tr>
-                <td>Show History</td>
-                <td colspan="2"><input type="checkbox" name="show_history" id="show_history" checked/></td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input id="exp_type" type="text" name="exp_type" value="FREE"/>
-                </td>
-            </tr>
-            <!-- Hidden inputs that carry the actual T/C values -->
-            <tr style="display:none">
-                <td></td>
-                <td><input type="text" id="block0_role" name="block0_role" value="C"/></td>
-                <td><input type="text" id="block1_role" name="block1_role" value="T"/></td>
-            </tr>
-        </table>
+                <h3>Session Configuration</h3>
+                <table class="bordered">
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>Block 0</td>
+                        <td>Block 1</td>
+                    </tr>
+                    <tr>
+                        <td>Stock Std.</td>
+                        <td><input type=text value="30,30" name="std_S_0" id="std_S_0"/></td>
+                        <td><input type=text value="30,30" name="std_S_1" id="std_S_1"/></td>
+                    </tr>
+                    <tr>
+                        <td>Stock Means</td>
+                        <td><input type=text value="0,0" name="mean_S_0" id="mean_S_0"/></td>
+                        <td><input type=text value="0,0" name="mean_S_1" id="mean_S_1"/></td>
+                    </tr>
+                    <tr>
+                        <td>Noise Std.</td>
+                        <td><input type=text value="5,30" name="std_N_0" id="std_N_0"/></td>
+                        <td><input type=text value="30,30" name="std_N_1" id="std_N_1"/></td>
+                    </tr>
+                    <tr>
+                        <td>N Firms</td>
+                        <td><input type=text value="2" name="n_firms_0" id="n_firms_0"/></td>
+                        <td><input type=text value="2" name="n_firms_1" id="n_firms_1"/></td>
+                    </tr>
+                    <tr>
+                        <td>Time Limit</td>
+                        <td><input type=text value="12" name="time_limit_0" id="time_limit_0"/></td>
+                        <td><input type=text value="12" name="time_limit_1" id="time_limit_1"/></td>
+                    </tr>
+                    <tr>
+                        <td>NPR Freq</td>
+                        <td><input type=text value="250,1000" name="npr_freq_0" id="npr_freq_0"/></td>
+                        <td><input type=text value="500,500" name="npr_freq_1" id="npr_freq_1"/></td>
+                    </tr>
+                    <tr>
+                        <td>Treatment</td>
+                        <td>
+                            <input type="radio" name="treatment_block" value="0"
+                                   onchange="handleTreatment(this)"/>
+                        </td>
+                        <td>
+                            <input type="radio" name="treatment_block" value="1"
+                                   onchange="handleTreatment(this)"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Show History</td>
+                        <td colspan="2"><input type="checkbox" name="show_history" id="show_history" checked/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input id="exp_type" type="text" name="exp_type" value="FREE"/>
+                        </td>
+                    </tr>
+                    <!-- Hidden inputs that carry the actual T/C values -->
+                    <tr style="display:none">
+                        <td></td>
+                        <td><input type="text" id="block0_role" name="block0_role" value="T"/></td>
+                        <td><input type="text" id="block1_role" name="block1_role" value="C"/></td>
+                    </tr>
+                </table>
 
+                <input type="submit"/>
+            </div>
 
-<h3>Save / Load Configuration</h3>
-<div class="bordered">
-    <table>
-        <tr>
-            <td>Config Name</td>
-            <td><input type="text" id="config_name" placeholder="e.g. my_experiment"/></td>
-        </tr>
-        <tr>
-            <td>Set as Default</td>
-            <td><input type="checkbox" id="is_default" name="is_default"/></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <input type="button" value="Save Config" onclick="saveConfig()"/>
-                &nbsp;
-                <input type="button" value="Load Config" onclick="loadConfig()"/>
-                &nbsp;
-                <input type="button" value="Delete Config" onclick="deleteConfig()"/>
-                &nbsp;
-                <select id="saved_configs">
-                    <option value="">-- saved configs --</option>
-                </select>
-                <input type="button" value="Refresh List" onclick="refreshConfigList()"/>
-            </td>
-        </tr>
-    </table>
-    <div id="config-status"></div>
-</div>
+            <!-- RIGHT COLUMN: config management -->
+            <div>
+                <h3>Save / Load Configuration</h3>
+                <div class="bordered">
+                    <table>
+                        <tr>
+                            <td>Config Name</td>
+                            <td><input type="text" id="config_name" placeholder="e.g. my_experiment"/></td>
+                        </tr>
+                        <tr>
+                            <td>Set as Default</td>
+                            <td><input type="checkbox" id="is_default" name="is_default"/></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <input type="button" value="Save" onclick="saveConfig()"/>
+                                &nbsp;
+                                <input type="button" value="Load" onclick="loadConfig()"/>
+                                &nbsp;
+                                <input type="button" value="Delete" onclick="deleteConfig()"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <select id="saved_configs">
+                                    <option value="">-- saved configs --</option>
+                                </select>
+                                &nbsp;
+                                <input type="button" value="Refresh" onclick="refreshConfigList()"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <div id="config-status"></div>
+                </div>
 
-        <input type="submit"/>
+                <h3>Copy / Paste Configuration</h3>
+                <div class="bordered">
+                    <input type="button" value="Copy Current Config" onclick="copyConfig()"/>
+                    &nbsp;
+                    <input type="button" value="Apply Pasted Config" onclick="pasteConfig()"/>
+                    <br><br>
+                    <textarea id="config_paste" rows="20" cols="40"
+                        placeholder="Paste config JSON here..."></textarea>
+                </div>
+            </div>
+
+        </div><!-- end two column layout -->
+
     </form>
 </body>
 </html>
