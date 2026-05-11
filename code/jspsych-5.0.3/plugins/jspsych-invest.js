@@ -214,7 +214,7 @@ jsPsych.plugins["invest"] = (function() {
 
                 trial_data.show_index = trial.show_index;
                 trial_data.period = trial.period + 1;
-                trial_data.out_of = trial.n_periods;
+                trial_data.condition= trial.condition
 
                 //save trial parameters you want to save around here
 

@@ -296,3 +296,20 @@ input[type="text"] {
     text-align: center;
 }
 
+.jspsych-survey-text-question {
+    text-align: left;
+    margin-left: 100px;
+}
+
+.jspsych-btn {
+    text-align: left;
+    margin-left: 100px;
+}
+
+
+#debrief {
+    max-width: 750px;
+    margin: 40px auto;
+    padding: 0 20px;
+    line-height: 1.6;
+}

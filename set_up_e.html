@@ -138,9 +138,7 @@ h3 {
         if (!document.getElementById('practice').checked)   data.delete('show_practice');
         if (!document.getElementById('survey').checked)     data.delete('show_survey');
         if (!document.getElementById('is_default').checked) data.delete('is_default');
-for (let [key, value] of data.entries()) {
-    console.log(key, value);
-}
+
         const resp = await fetch('save_config.php', { method: 'POST', body: data });
         const json = await resp.json();
 
@@ -196,6 +194,9 @@ for (let [key, value] of data.entries()) {
         document.getElementById('npr_freq_1').value   = cfg.npr_freq_1;
         document.getElementById('show_history').checked = cfg.show_history === 't' || cfg.show_history === true;
         document.getElementById('exp_type').value     = cfg.exp_type;
+        document.getElementById('block0_role').value = cfg.block0_role;
+        document.getElementById('block1_role').value = cfg.block1_role;
+        setTreatmentRadio(cfg.block0_role);
 
         // Save/load section
         document.getElementById('config_name').value  = cfg.config_name;
@@ -260,6 +261,26 @@ for (let [key, value] of data.entries()) {
         status.textContent = json.success
             ? `Cleared successfully — ${json.rows_deleted} row(s) deleted.`
             : 'Error clearing data.';
+    }
+
+    function handleTreatment(radio) {
+        if (radio.value === '0') {
+            document.getElementById('block0_role').value = 'T';
+            document.getElementById('block1_role').value = 'C';
+        } else {
+            document.getElementById('block0_role').value = 'C';
+            document.getElementById('block1_role').value = 'T';
+        }
+    }
+
+    function setTreatmentRadio(block0_role) {
+        const radios = document.querySelectorAll('input[name="treatment_block"]');
+        radios.forEach(r => r.checked = false);
+        if (block0_role === 'T') {
+            document.querySelector('input[name="treatment_block"][value="0"]').checked = true;
+        } else {
+            document.querySelector('input[name="treatment_block"][value="1"]').checked = true;
+        }
     }
 </script>
 
@@ -342,6 +363,17 @@ for (let [key, value] of data.entries()) {
                 <td><input type=text value="500,500" name="npr_freq_1" id="npr_freq_1"/></td>
             </tr>
             <tr>
+                <td>Treatment</td>
+                <td>
+                    <input type="radio" name="treatment_block" value="0" 
+                           onchange="handleTreatment(this)"/> 
+                </td>
+                <td>
+                    <input type="radio" name="treatment_block" value="1" 
+                           onchange="handleTreatment(this)"/> 
+                </td>
+            </tr>
+            <tr>
                 <td>Show History</td>
                 <td colspan="2"><input type="checkbox" name="show_history" id="show_history" checked/></td>
             </tr>
@@ -350,7 +382,14 @@ for (let [key, value] of data.entries()) {
                     <input id="exp_type" type="text" name="exp_type" value="FREE"/>
                 </td>
             </tr>
+            <!-- Hidden inputs that carry the actual T/C values -->
+            <tr style="display:none">
+                <td></td>
+                <td><input type="text" id="block0_role" name="block0_role" value="C"/></td>
+                <td><input type="text" id="block1_role" name="block1_role" value="T"/></td>
+            </tr>
         </table>
+
 
 <h3>Save / Load Configuration</h3>
 <div class="bordered">

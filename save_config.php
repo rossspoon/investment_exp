@@ -33,22 +33,26 @@ $result = pg_query_params($conn,
         std_s_0, std_s_1, mean_s_0, mean_s_1,
         std_n_0, std_n_1, n_firms_0, n_firms_1,
         time_limit_0, time_limit_1, npr_freq_0, npr_freq_1,
-        show_history, exp_type, is_default, updated_at
-    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,NOW())
+        show_history, exp_type, is_default,
+        block0_role, block1_role,
+        updated_at
+    ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,NOW())
     ON CONFLICT (config_name) DO UPDATE SET
         test_mode = $2, quick_mode = $3, show_instructions = $4, show_practice = $5,
         show_survey = $6, n_periods = $7,
         std_s_0 = $8, std_s_1 = $9, mean_s_0 = $10, mean_s_1 = $11,
         std_n_0 = $12, std_n_1 = $13, n_firms_0 = $14, n_firms_1 = $15,
         time_limit_0 = $16, time_limit_1 = $17, npr_freq_0 = $18, npr_freq_1 = $19,
-        show_history = $20, exp_type = $21, is_default = $22, updated_at = NOW()',
+        show_history = $20, exp_type = $21, is_default = $22,
+        block0_role = $23, block1_role = $24,
+        updated_at = NOW()',
     [
         $config_name,
-        isset($_POST['test_mode'])         ? 'true' : 'false',
-        isset($_POST['quick_mode'])        ? 'true' : 'false',
-        isset($_POST['show_instructions']) ? 'true' : 'false',
-        isset($_POST['show_practice'])     ? 'true' : 'false',
-        isset($_POST['show_survey'])       ? 'true' : 'false',
+        isset($_POST['test_mode'])          ? 'true' : 'false',
+        isset($_POST['quick_mode'])         ? 'true' : 'false',
+        isset($_POST['show_instructions'])  ? 'true' : 'false',
+        isset($_POST['show_practice'])      ? 'true' : 'false',
+        isset($_POST['show_survey'])        ? 'true' : 'false',
         $_POST['n_periods'],
         $_POST['std_S_0'],
         $_POST['std_S_1'],
@@ -62,9 +66,11 @@ $result = pg_query_params($conn,
         $_POST['time_limit_1'],
         $_POST['npr_freq_0'],
         $_POST['npr_freq_1'],
-        isset($_POST['show_history']) ? 'true' : 'false',
+        isset($_POST['show_history'])       ? 'true' : 'false',
         $_POST['exp_type'],
         $is_default,
+        $_POST['block0_role'] ?? 'C',
+        $_POST['block1_role'] ?? 'T',
     ]
 );
 

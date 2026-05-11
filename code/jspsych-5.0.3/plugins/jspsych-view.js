@@ -31,7 +31,7 @@
                         trial_data.test_mode = trial.test_mode;
                         trial_data.frequency = trial.frequency;
                         trial_data.period = trial.period + 1;
-                        trial_data.out_of = trial.n_periods;
+                        trial_data.condition= trial.condition
 
 
 			//----------------------- trial parameters -----------------------
@@ -170,12 +170,13 @@
 			var NPR_plot_last_1 = [];
 
 			function done () {
+				clearInterval(countDown);
+                                clearInterval(overInterval);
 				
 				mouseTimes[random_order_stocks[over]] += ((new Date()).getTime()) - trial_data.userStart - trial_data.eventTimes_time.slice(-1)[0];
 				trial_data.eventTimes_index.push(-1)
 				trial_data.eventTimes_time.push((new Date()).getTime() - trial_data.userStart)
 
-				clearInterval(countDown);
 
 				trial_data.doneTime = (new Date()).getTime();
 				trial_data.time = total_time;
@@ -765,7 +766,8 @@
 
                                                         over = ii;
 							npr_chart = all_charts[ii];
-                                                        ridx = random_order_stocks[ii]
+                                                        ridx = random_order_stocks[ii];
+                                                        console.log(ridx);
                                                         clearInterval(overInterval);   // ensure there is at most only one interval running
                                                         overInterval = setInterval(updateNPR, frequency[ridx], ridx);
 
