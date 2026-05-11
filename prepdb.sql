@@ -25,8 +25,8 @@ CREATE TABLE session_configs (
     show_survey BOOLEAN DEFAULT TRUE,
     n_periods INTEGER DEFAULT 20,
     is_default BOOLEAN DEFAULT FALSE,
-    block0_role TEXT DEFAULT 'T';
-    block1_role TEXT DEFAULT 'C';
+    block0_role TEXT DEFAULT 'T',
+    block1_role TEXT DEFAULT 'C',
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
