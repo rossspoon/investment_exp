@@ -333,20 +333,140 @@
                         'The information you gather about each stock represents:',
                         'In each period,  the stocks presented will:',
                         'If you choose to not invest some or all of you 100 cash allotment, the cash will earn interest.',
+                        'At the end of the experiment, you will not receive a bonus',
                         ];
         var options = [
                         ['the average return of the stock.', 'complete randomness.', 'the actual return of the stock.', 'none of the above.'],
                         ['both gain in value.', 'both lose value.', 'Can either gain or lose value.'],
-                        ['True', 'False']
+                        ['True', 'False'],
+                        ['True', 'False'],
                       ];
         var comprehension_block = {
                         type: "survey-multi-choice",
-                        required: [ true, true, true ],
+                        required: [ true, true, true, false ],
                         preamble: "Please answer the following questions:",
                         questions: questions,
                         options: options,
                         data: { stage: "comprehension" },
+                        on_load: function() {
+                        setTimeout(function() {
+                            var el = document.getElementById('jspsych-survey-multi-choice-3');
+                            if (el) {
+                              el.style.display = 'none';
+                              jsPsych.data.addDataToLastTrial({ q4_hidden: true });
+                            } else {
+                              jsPsych.data.addDataToLastTrial({ q4_hidden: false });
+                            }
+                        }, 0);
+            }
+
         };
+
+    //
+    // Humanity
+    //
+    // 1. Define your puzzle pool globally or right before the timeline
+    const anagramPool = [
+      { scrambled: "E L P P A", answer: "apple" },
+      { scrambled: "T T S E"  , answer: "test" },
+      { scrambled: "E S O U H", answer: "house" },
+      { scrambled: "G I C A M", answer: "magic" },
+      { scrambled: "R W O D L", answer: "world" }
+    ];
+
+    // Pick a random anagram for this trial execution
+    const activeTask = anagramPool[Math.floor(Math.random() * anagramPool.length)];
+
+    // Telemetry variables to capture human behavior
+    let startTime;
+    let physicalKeystrokes = 0;
+    let textPasted = false;
+
+    // 2. Define the jsPsych trial
+    const botCheckTrial = {
+      type:'html',
+      url: "bot_check.html",
+      //cont_btn: "start",
+      
+      
+      // Runs immediately after the HTML elements are rendered to the DOM
+      on_load: function() {
+        setTimeout(function() {
+
+                startTime = Date.now();
+                physicalKeystrokes = 0;
+                textPasted = false;
+
+                const inputEl = document.getElementById("anagram-answer");
+                const scrambled= document.getElementById("scrambled-word");
+                const hpq= document.getElementById("hp_question");
+                const submitBtn = document.getElementById("submit-anagram-btn");
+
+                // Set Scrambled Word
+                scrambled.innerHTML = activeTask.scrambled;
+
+                // Ensure the text box gets immediate focal point
+                inputEl.focus();
+
+                // Track physical keypress actions vs script injections
+                inputEl.addEventListener("keydown", function(event) {
+                  if (event.key.length === 1) {
+                    physicalKeystrokes++;
+                  }
+                });
+
+                // Detect if text bypasses typing via copy/paste
+                inputEl.addEventListener("paste", function() {
+                  textPasted = true;
+                });
+
+                // Handle manual submission flag
+                submitBtn.addEventListener("click", function() {
+                  const userInput = inputEl.value.trim().toLowerCase();
+                  const completeTime = (Date.now() - startTime) / 1000;
+                  
+                  let suspiciousWeight = 0;
+                  let anomalyFlags = [];
+
+                  // Flag 1: Wrong Answer
+                  if (userInput !== activeTask.answer) {
+                    anomalyFlags.push("INCORRECT_ANSWER");
+                    suspiciousWeight += 30;
+                  }
+
+                  // Flag 2: HP
+                  if (hpq.value !== "") {
+                    anomalyFlags.push("HP_ANSWER");
+                    suspiciousWeight += 100;
+                  }
+
+                  // Flag 3: Scripted Execution Speeds
+                  if (completeTime < 2.5) {
+                    anomalyFlags.push("IMPOSSIBLE_RESPONSE_SPEED");
+                    suspiciousWeight += 50;
+                  }
+
+                  // Flag 4: Elements modified without physical keydowns
+                  if (userInput.length > 0 && physicalKeystrokes === 0) {
+                    anomalyFlags.push("ZERO_KEYSTROKES_REGISTERED");
+                    suspiciousWeight += 70;
+                  }
+
+                  // Compile evaluation results
+                  const botCheckData = {
+                    passedValidation: suspiciousWeight < 50,
+                    botScore: suspiciousWeight,
+                    timeElapsedSec: parseFloat(completeTime.toFixed(2)),
+                    totalKeystrokes: physicalKeystrokes,
+                    wasPasted: textPasted,
+                    triggeredFlags: anomalyFlags.join(",")
+                  };
+
+                  // Force-advance jsPsych and attach the data payload directly to this trial
+                  jsPsych.finishTrial(botCheckData);
+                });
+              }, 50);
+          }};
 
     	var style_instructions_postpractice = [ "<p style='text-align:center'>The real task will now begin! Remember you have a time limit! Click 'Next' when you are ready!</p>" ]
 
@@ -483,7 +603,6 @@
 		//-------Main task blocks
 async function get_timeline() {
 		var timeline = [];
-
 		if (show_instructions) {
 			timeline.push(consent_block);
 
@@ -558,6 +677,7 @@ async function get_timeline() {
 
             if (show_instructions) {
                     timeline.push(comprehension_block)
+                    timeline.push(botCheckTrial)
                     timeline.push(instructions_block_postpractice);
             }
 
