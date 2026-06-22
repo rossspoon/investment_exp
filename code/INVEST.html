@@ -389,18 +389,38 @@
       //cont_btn: "start",
       
       
-      // Runs immediately after the HTML elements are rendered to the DOM
+      // Runs This seems to run before the DOM is properly loaded so we wait
+      // for the elements to load in browser before continuing.
       on_load: function() {
-        setTimeout(function() {
+            function waitForElements(callback, { interval = 50, timeout = 10000 } = {}) {
+              const start = Date.now();
+              (function check() {
+
+                console.log("WAIT INTERVAL - (bot_check)");
+                const inputEl   = document.getElementById("anagram-answer");
+                const scrambled = document.getElementById("scrambled-word");
+                const hpq       = document.getElementById("hp_question");
+                const submitBtn = document.getElementById("submit-anagram-btn");
+
+                if (inputEl && scrambled && hpq && submitBtn) {
+                  callback({ inputEl, scrambled, hpq, submitBtn });   // found → continue
+                } else if (Date.now() - start < timeout) {
+                  setTimeout(check, interval);                        // not ready → retry in 50ms
+                } else {
+                  console.error("bot_check: elements never appeared within " + timeout + "ms");
+                }
+              })();
+            };
+            waitForElements(({ inputEl, scrambled, hpq, submitBtn }) => {
 
                 startTime = Date.now();
                 physicalKeystrokes = 0;
                 textPasted = false;
 
-                const inputEl = document.getElementById("anagram-answer");
-                const scrambled= document.getElementById("scrambled-word");
-                const hpq= document.getElementById("hp_question");
-                const submitBtn = document.getElementById("submit-anagram-btn");
+                // const inputEl = document.getElementById("anagram-answer");
+                // const scrambled= document.getElementById("scrambled-word");
+                // const hpq= document.getElementById("hp_question");
+                // const submitBtn = document.getElementById("submit-anagram-btn");
 
                 // Set Scrambled Word
                 scrambled.innerHTML = activeTask.scrambled;
@@ -465,8 +485,8 @@
                   // Force-advance jsPsych and attach the data payload directly to this trial
                   jsPsych.finishTrial(botCheckData);
                 });
-              }, 500);
-          }};
+              });
+           }};
 
     	var style_instructions_postpractice = [ "<p style='text-align:center'>The real task will now begin! Remember you have a time limit! Click 'Next' when you are ready!</p>" ]
 
