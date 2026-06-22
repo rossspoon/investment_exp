@@ -70,7 +70,6 @@
                 async function loadContent(urls) {
                     const docs = urls.map(async (url) => {
                         content = await fetchHtmlAsText(url);
-                                console.log("GOT:  " + url);
                         return content;
                     });
                     const a = await Promise.all(docs);
@@ -396,7 +395,6 @@
               const start = Date.now();
               (function check() {
 
-                console.log("WAIT INTERVAL - (bot_check)");
                 const inputEl   = document.getElementById("anagram-answer");
                 const scrambled = document.getElementById("scrambled-word");
                 const hpq       = document.getElementById("hp_question");
