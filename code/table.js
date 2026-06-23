@@ -273,8 +273,8 @@ function make_table_row(i, ros, names, show_investment) {
     tr.append(td);
     canv_ax = $("<canvas>", {
             id: "canvas_" + i + "_axis",
-            width: "200px",
-            height: "180px",
+            //width: "200px",
+            height: "189px",
             class: "canvas-axis",
     });
     td.append(canv_ax);

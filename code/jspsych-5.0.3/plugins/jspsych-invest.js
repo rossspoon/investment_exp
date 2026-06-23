@@ -210,7 +210,7 @@ jsPsych.plugins["invest"] = (function() {
                 trial_data.show_history = trial.show_history;
 
                 trial_data.endowment = trial.endowment;
-                trial_data.balance = 0
+                trial_data.balance = trial.endowment;
 
                 trial_data.show_index = trial.show_index;
                 trial_data.period = trial.period + 1;
@@ -1070,7 +1070,9 @@ jsPsych.plugins["invest"] = (function() {
                 } else {
                     container_div.attr('err_msg', "Reduce investment amounts");
                 }
+                $('#proceed').removeClass('btn-on');
             } else {
+                $('#proceed').addClass('btn-on');
                 container_div.removeClass('inv-err');
             }
 
@@ -1084,17 +1086,14 @@ jsPsych.plugins["invest"] = (function() {
                 $('#totals_tot').html("" + total);
                 $('#cash_inv').html("" + trial_data.balance);
                 current_balance = trial_data.balance;
-                
-                if (total == trial_data.endowment){
-                    $('#proceed').addClass('btn-on');
-                } else {
-                    $('#proceed').removeClass('btn-on');
-                }
-               
             }, 500);
         });
 
-        $("#proceed").on("click", function () {if (trial.feedback == true) feedback(); else done();});
+        $("#proceed").on("click", function () {
+            if (! $(this).hasClass('btn-on')) {
+                return;
+            };
+            if (trial.feedback == true) feedback(); else done();});
     }
 
 }; // END OF TRIAL

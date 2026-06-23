@@ -184,6 +184,8 @@ input[type="text"] {
     min-width: 50px;
 }
 .canvas-axis{
+    height: 189px;
+    margin-bottom: 3px;
 }
 
 /* SUBMIT BUTTON - start */
