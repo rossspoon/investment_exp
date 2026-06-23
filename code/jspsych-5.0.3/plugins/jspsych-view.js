@@ -503,7 +503,8 @@ jsPsych.plugins["view"] = (function() {
 
                             std = noise_std[x]
                             error = normal(trial.error_mean, std);
-                            while ((error > trial.error_mean + 4.5 * std) || (error < trial.error_mean - 4.5 * std)) {
+                            //while ((error > trial.error_mean + 4.5 * std) || (error < trial.error_mean - 4.5 * std)) {
+                            while ((error > 100) || (error < -100)) {
                                 error = normal(trial.error_mean, std);
                             }
 
