@@ -1,6 +1,6 @@
 
 <p style='text-align:center'>
-<img src='imgs/03_signals.png' style='width:800px'>
+<img src='imgs/03_signals.png' style='width:700px'>
 </img>
 </p>
 

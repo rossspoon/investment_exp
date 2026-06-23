@@ -233,6 +233,8 @@
 				practice_histories[i].push(x);
 			}
 		}
+            console.log("pratice_histories:");
+            console.log(practice_histories);
 
 		// Write history [period][firm]
 		var histories = [];
@@ -331,11 +333,11 @@
         var questions = [
                         'The information you gather about each stock represents:',
                         'In each period,  the stocks presented will:',
-                        'If you choose to not invest some or all of you 100 cash allotment, the cash will earn interest.',
+                        'If you choose to not invest some or all of your 100 cash allotment, the cash will earn interest.',
                         'At the end of the experiment, you will not receive a bonus.',
                         ];
         var options = [
-                        ['the average return of the stock.', 'complete randomness.', 'the actual return of the stock.', 'none of the above.'],
+                        ['the average return of the stock.', 'nothing to do with the stock.  It is completely random.', 'your suggested investment in that stock.', 'none of the above.'],
                         ['both gain in value.', 'both lose value.', 'Can either gain or lose value.'],
                         ['True', 'False'],
                         ['True', 'False'],
@@ -637,6 +639,8 @@ async function get_timeline() {
 		
 		// Loop through practice periods
                 if (show_practice) {
+
+                    practice_noise = [[20, 20], [15, 15]];
                     for (var t = 0; t < practice_n_periods; t++) {
 
                                     var practice_view_trial = {
@@ -648,7 +652,7 @@ async function get_timeline() {
                                             // total_time: time_limit,
                                             prior_mean: practice_prior_mean,
                                             prior_std: practice_prior_std[t],
-                                            noise_std: noise_std[t],
+                                            noise_std: practice_noise[t],
                                             next_period_realizations: practice_histories[t],
                                             next_button: true,
                                             error_std: error_std,

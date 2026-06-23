@@ -315,3 +315,8 @@ input[type="text"] {
     padding: 0 20px;
     line-height: 1.6;
 }
+
+#jspsych-survey-multi-choice-form {
+    margin-left: 90px;
+    margin-top: 50px;
+}

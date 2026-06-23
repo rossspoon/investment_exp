@@ -3,7 +3,7 @@ To determine your bonus payment, we will first select one of the periods that
  you played at random.  
 Next, we will take the total amount earned in that period and divide it by 20.  
 This will be your bonus in USD.
-  Because, your bonus is based on a randomly selected period, it is in your i
+  Because your bonus is based on a randomly selected period, it is in your 
 best interest to make the best possible investment choices in each period.
  </p>
 <p>  </p>
@@ -11,7 +11,7 @@ best interest to make the best possible investment choices in each period.
 <p>  </p>
 
 <p style='text-align:center'>
-<img src='imgs/05_result.png' style='width:800px'>
+<img src='imgs/05_result.png' style='width:700px'>
 </img>
 </p>
 
