@@ -1,9 +1,5 @@
-
-<p style='text-align:center'>
-<img src='imgs/04_investment.png' style='width:800px'>
-</img>
-</p>
-
+<div class='instr-layout'>
+<div>
 <p>
 The second stage of a period is an investment stage.  In this stage, you will decide how much 
 of your 100 units of cash
@@ -15,10 +11,17 @@ You may invest any amount you wish up to your cash amount.
 You are not required to invest all of your cash.
   You may invest nothing if you wish.  
 </p>
-
 <p>  </p>
 <p>
 You have as much time as you need to make your investments. 
 Feel free to adjust them until you are satisfied. When you are satisfied with your 
 investments, click on the “SUBMIT” button at the bottom of the screen.
 </p>
+</div>
+
+<div>
+<img src='imgs/04_investment.png' style='width:550px' /img>
+</div>
+</div>
+
+

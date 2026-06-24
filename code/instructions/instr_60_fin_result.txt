@@ -1,3 +1,5 @@
+<div class='instr-layout'>
+<div>
 <p> After the last period, we will calculate your bonus payment.  
 To determine your bonus payment, we will first select one of the periods that
  you played at random.  
@@ -8,11 +10,14 @@ best interest to make the best possible investment choices in each period.
  </p>
 <p>  </p>
 <p> For example, if the randomly selected period was as shown.  Your bonus payment will be 96.12 ÷ 20 = $4.81. </p>
-<p>  </p>
+</div>
 
-<p style='text-align:center'>
-<img src='imgs/05_result.png' style='width:700px'>
-</img>
-</p>
+<div>
+<img src='imgs/05_result.png' style='width:550px' /img>
+</div>
+</div>
+
+
+
 
 

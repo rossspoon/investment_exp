@@ -324,3 +324,18 @@ input[type="text"] {
 .practice_on {
     margin-bottom: 70px;
 }
+
+.instr-layout {
+    display: flex;
+    justify-content: space-between;
+}
+
+.instr-layout div {
+    margin-right: 20px;
+    margin-left: 20px;
+    text-align: justify;
+}
+
+.jspsych-display-element {
+    width: 1100px;
+}
