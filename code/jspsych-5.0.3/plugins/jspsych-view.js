@@ -503,12 +503,13 @@ jsPsych.plugins["view"] = (function() {
 
                             std = noise_std[x]
                             error = normal(trial.error_mean, std);
-                            //while ((error > trial.error_mean + 4.5 * std) || (error < trial.error_mean - 4.5 * std)) {
-                            while ((error > 100) || (error < -100)) {
-                                error = normal(trial.error_mean, std);
-                            }
-
                             npr = true_val + error;
+                            while (npr> 100 || npr< -100) {
+                                console.log("loop - ", npr);
+                                error = normal(trial.error_mean, std);
+                                npr = true_val + error;
+                            }
+                            console.log("npr - ", npr);
                             npr = Math.round(npr);
 
                             NPR_plot[over].push({x:1, y:npr});
