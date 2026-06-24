@@ -788,7 +788,6 @@ jsPsych.plugins["view"] = (function() {
                                                 over = ii;
                                                 npr_chart = all_charts[ii];
                                                 ridx = random_order_stocks[ii];
-                                                console.log(ridx);
                                                 clearInterval(overInterval);   // ensure there is at most only one interval running
                                                 overInterval = setInterval(updateNPR, frequency[ridx], ridx);
 
@@ -907,7 +906,6 @@ jsPsych.plugins["view"] = (function() {
 
         if (trial.test_mode){
             for (i=-100;i<=101;i+=50){
-                console.log(i);
                 drawHorizontalLine(all_charts[0], i);
                 drawHorizontalLine(all_charts[1], i);
             }

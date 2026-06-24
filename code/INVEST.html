@@ -585,7 +585,7 @@
 		//define function for calculating total bonus
 		function roundFloat(y,x) { return (Math.floor(y/x) * x).toFixed(2) };
  		function getBonus() {
-                    var test_outcomes = jsPsych.data.getTrialsOfType('invest');
+                    var test_outcomes = jsPsych.data.getData().filter(item => item.stage === 'invest');
                     var total_reward= 0;
 
                     random_period = Math.floor(Math.random() * (n_periods));
