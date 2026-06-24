@@ -666,6 +666,9 @@ jsPsych.plugins["invest"] = (function() {
                             "class": "layout",
                         });
                         display_element.append(layout);
+                        if (instructions) {
+                            layout.addClass('practice_on');
+                        }
 
                         layout.append(makeTable(nFirms, random_order_stocks, names, true));
 
