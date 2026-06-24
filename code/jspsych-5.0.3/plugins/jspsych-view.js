@@ -505,11 +505,9 @@ jsPsych.plugins["view"] = (function() {
                             error = normal(trial.error_mean, std);
                             npr = true_val + error;
                             while (npr> 100 || npr< -100) {
-                                console.log("loop - ", npr);
                                 error = normal(trial.error_mean, std);
                                 npr = true_val + error;
                             }
-                            console.log("npr - ", npr);
                             npr = Math.round(npr);
 
                             NPR_plot[over].push({x:1, y:npr});
