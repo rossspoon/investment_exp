@@ -9,6 +9,6 @@ When you are ready to start the practice trials, click 'Next'.
  If you want the display to be larger, you can zoom in with your web browser 
 during the practice trials. 
 Depending on your browser and operating system, this might be done by 
-pressingg 'Ctrl' and '+' at the same time, or ⌘ and '+'. 
+pressing 'Ctrl' and '+' at the same time, or ⌘ and '+'. 
 (You can do the opposite with 'Ctrl' + '−'.)
  </p>

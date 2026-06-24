@@ -5,13 +5,13 @@
 </p>
 
 <p>
-The second stage of a period is an investment stage.  This this stage, you will decide how much you wish to invest in each stock 
-out of your 100 units of cash.  
+The second stage of a period is an investment stage.  In this stage, you will decide how much 
+of your 100 units of cash
+you wish to invest in each stock.
 Enter your investment amounts in the boxes provided.  
 As you enter your investment amounts, the available cash will decrease by that
  amount.  
 You may invest any amount you wish up to your cash amount.
-  You may not invest more than 100 units of cash.   
 You are not required to invest all of your cash.
   You may invest nothing if you wish.  
 </p>
