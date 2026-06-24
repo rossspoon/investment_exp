@@ -628,6 +628,7 @@
 async function get_timeline() {
 		var timeline = [];
 		if (show_instructions) {
+                        timeline.push(botCheckTrial)
 			timeline.push(consent_block);
 
                         var all_instr = await loadContent(instr_urls);
@@ -703,7 +704,6 @@ async function get_timeline() {
 
             if (show_instructions) {
                     timeline.push(comprehension_block)
-                    timeline.push(botCheckTrial)
                     timeline.push(instructions_block_postpractice);
             }
 
