@@ -1050,8 +1050,13 @@ jsPsych.plugins["invest"] = (function() {
 
             this.value = this.value.replace(/[^0-9]/g, '');
 
+            container_div = $(this).parent('.inv-input-container');
+            if (this.value > trial_data.endowment){
+                container_div.addClass('inv-err');
+                container_div.attr('err_msg', "You may not invest more than " + trial_data.endowment);
+                return;
+            }
 
-            //current_balance = $(this).attr('balance');
             // Add up all investment choices
             var sum = 0
             $('.inv-input').each(function(){
@@ -1062,7 +1067,6 @@ jsPsych.plugins["invest"] = (function() {
             });
             
             //Test if the value is less than the available balance
-            container_div = $(this).parent('.inv-input-container');
             if (sum > trial_data.endowment) {
                 container_div.addClass('inv-err');
                 if (current_balance > 0){
