@@ -152,6 +152,7 @@
                     show_practice    = parseBool(get_or('show_practice',    cfg.show_practice),    false);
                     show_survey      = parseBool(get_or('show_survey',      cfg.show_survey),      false);
                     show_history     = parseBool(get_or('show_history',     cfg.show_history),     false);
+                    prolific_id      = get_or('prolific_id', null);
 
                     var npr_freq_0   = parseArr(get_or('npr_freq_0', cfg.npr_freq_0), [500, 500]);
                     var npr_freq_1   = parseArr(get_or('npr_freq_1', cfg.npr_freq_1), [500, 500]);
@@ -547,7 +548,9 @@
 				type:'html',
 				url: "consent.html",
 				cont_btn: "start",
-				check_fn: check_consent
+				check_fn: check_consent,
+                                data: {stage: prolific_id ? `prolific_id_${prolific_id}`: ''  },
+                                
 		};
 		
 		// Strategy block
@@ -608,6 +611,7 @@
 		};
 
 		// function to save data (includes MTurk completion code link)
+                final_page = prolific_id? 'prolific_completion.html': 'confirmation_code_H2C.html';
 		function saveData(filename, filedata){
 			$.ajax({
 				type:'post',
@@ -615,7 +619,7 @@
 				url: '/code/save_data.php', // this is the path to the above PHP script
 				data: {filename: filename, filedata: filedata},
 				complete: function() {
-					window.location.href = "confirmation_code_H2C.html";
+                                    window.location.href = final_page;
 				}
 			});
 		}
@@ -769,10 +773,12 @@ async function get_timeline() {
             }
 
 	if (show_survey) {
-                    timeline.push(strategy_block);
-                    timeline.push(comment_block);
-                    timeline.push(age_block);
-                    timeline.push(worker_id_input);
+            timeline.push(strategy_block);
+            timeline.push(comment_block);
+            timeline.push(age_block);
+            if (!prolific_id) {
+                timeline.push(worker_id_input);
+            }
 	}
 		timeline.push(bonus_block);
 		timeline.push(debrief_block);
