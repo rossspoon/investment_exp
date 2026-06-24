@@ -43,6 +43,7 @@
     margin-right: auto;
     margin-bottom: 30px;
     margin-top: var(--table-marg-top);
+    margin-bottom: 70px;
 }
 
 
@@ -319,10 +320,6 @@ input[type="text"] {
 #jspsych-survey-multi-choice-form {
     margin-left: 90px;
     margin-top: 50px;
-}
-
-.practice_on {
-    margin-bottom: 70px;
 }
 
 .instr-layout {
