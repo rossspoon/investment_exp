@@ -317,8 +317,10 @@
         //write instructions in practice trials
         function style_practice_instruction_fn(factors, t) {
         return "This is a self-paced practice trial. The true stock returns are: "
-            +  "<br>Stock A: " + factors[t][0] 
-            + "<br>Stock B: " + factors[t][1] 
+            +  "<br/>Stock A: " + factors[t][0] 
+            + "<br/>Stock B: " + factors[t][1] 
+                + "<div class='practice-note'>The true returns are shown here to give you a sense of how they "
+                + "relate to the signals you draw. In the real task, these will not be available.</div>"
         }
 
         function style_practice_view_instruction_fn(factors, t) {
