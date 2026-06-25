@@ -1054,6 +1054,7 @@ jsPsych.plugins["invest"] = (function() {
             if (this.value > trial_data.endowment){
                 container_div.addClass('inv-err');
                 container_div.attr('err_msg', "You may not invest more than " + trial_data.endowment);
+                $('#proceed').removeClass('btn-on');
                 return;
             }
 
